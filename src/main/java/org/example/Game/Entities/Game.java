@@ -61,8 +61,9 @@ public class Game {
         for (JsonNode enemyNode : enemies) {
             String name = enemyNode.get("nome").asText();
             int power = enemyNode.get("poder").asInt();
+            int health = enemyNode.get("vida").asInt();
             String division = enemyNode.get("divisao").asText();
-            IEnemy enemy = new Enemy(name, power, new Division(division));
+            IEnemy enemy = new Enemy(name, power, health, new Division(division));
             mission.getEnemies().addToRear(enemy);
         }
 

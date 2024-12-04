@@ -3,29 +3,17 @@ package org.example.Game.Entities;
 import org.example.Game.Entities.Interfaces.IDivision;
 import org.example.Game.Entities.Interfaces.IEnemy;
 
-public class Enemy implements IEnemy {
-    private String name;
-    private int power;
-    private IDivision division;
+public class Enemy extends Character implements IEnemy {
 
-    public Enemy(String name, int power, IDivision division) {
-        this.name = name;
-        this.power = power;
-        this.division = division;
+
+
+    public Enemy(String name, int power, int health, IDivision currentDivision) {
+        super(name, power, health, currentDivision);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public void attackToCruz(ToCruz toCruz) {
+        toCruz.setHealth(toCruz.getHealth() - this.getPower());
     }
 
-    @Override
-    public int getPower() {
-        return power;
-    }
-
-    @Override
-    public IDivision getDivision() {
-        return division;
-    }
 }

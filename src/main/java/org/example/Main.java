@@ -60,7 +60,7 @@ public class Main {
                             case LIFE_KIT:
                                 System.out.println(" -> Item: " + item.getType() + " (Recovered Points: " + item.getRecoveryPoints() + ")");
                                 break;
-                            case EXTRA_POINTS:
+                            case BULLET_PROOF_VEST:
                                 System.out.println(" -> Item: " + item.getType() + " (Extra Points: " + item.getExtraPoints() + ")");
                                 break;
                             default:

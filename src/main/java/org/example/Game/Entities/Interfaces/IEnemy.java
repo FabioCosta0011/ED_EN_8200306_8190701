@@ -1,27 +1,17 @@
 package org.example.Game.Entities.Interfaces;
 
+import org.example.Game.Entities.ToCruz;
+
 /**
  * Interface representing the contract for Enemy entities.
  */
-public interface IEnemy {
-    /**
-     * Gets the name of the enemy.
-     *
-     * @return the name of the enemy.
-     */
-    String getName();
+public interface IEnemy extends ICharacter {
 
     /**
-     * Gets the power level of the enemy.
+     * Attacks the ToCruz entity.
      *
-     * @return the power level of the enemy.
+     * @param toCruz the ToCruz entity to attack.
      */
-    int getPower();
+    void attackToCruz(ToCruz toCruz);
 
-    /**
-     * Gets the division where the enemy is located.
-     *
-     * @return the division of the enemy.
-     */
-    IDivision getDivision();
 }

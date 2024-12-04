@@ -4,6 +4,7 @@ import org.example.Game.Entities.Interfaces.IDivision;
 import org.example.Game.Entities.Interfaces.ITarget;
 
 class Target implements ITarget {
+
     private IDivision division;
 
     private String type;

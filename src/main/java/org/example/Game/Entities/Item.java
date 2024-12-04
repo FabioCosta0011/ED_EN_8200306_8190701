@@ -25,7 +25,7 @@ public class Item implements IItem {
 
     // Static factory method for "pontos-extra"
     public static Item createExtraPoints(IDivision division, int extraPoints) {
-        return new Item(division, null, extraPoints, ItemType.EXTRA_POINTS);
+        return new Item(division, null, extraPoints, ItemType.BULLET_PROOF_VEST);
     }
 
     // Getters and Setters

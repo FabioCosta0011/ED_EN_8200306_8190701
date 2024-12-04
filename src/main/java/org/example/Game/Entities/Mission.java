@@ -66,7 +66,7 @@ public class Mission {
 
         // Iterar sobre todos os inimigos e adicionar à lista de resultados se pertencerem à divisão
         for (IEnemy enemy : enemies) {
-            if (enemy.getDivision().equals(division)) {
+            if (enemy.getCurrentDivision().equals(division)) {
                 enemiesInDivision.addToRear(enemy);
             }
         }
