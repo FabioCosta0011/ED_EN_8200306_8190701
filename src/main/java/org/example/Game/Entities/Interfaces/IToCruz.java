@@ -10,6 +10,11 @@ import org.example.Structures.Interfaces.StackADT;
  */
 public interface IToCruz {
 
+
+    int getHealth();
+
+    public void setHealth(int health);
+
     /**
      * Consumes a bulletproof vest.
      *

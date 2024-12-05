@@ -11,17 +11,28 @@ public class ToCruz extends Character implements IToCruz {
 
     private static final int MAX_HEALTH = 100;
 
+    private int health;
 
     private StackADT<Item> healthKits;
 
     private boolean isUsingBulletProofVest;
 
     public ToCruz(String name, int power, int health, IDivision currentDivision, StackADT<Item> healthKits, boolean isUsingBulletProofVest) {
-        super(name, power, health, currentDivision);
+        super(name, power, currentDivision);
+        this.health = health;
         this.healthKits = healthKits;
         this.isUsingBulletProofVest = false;
     }
 
+    @Override
+    public int getHealth() {
+        return health;
+    }
+
+    @Override
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
     @Override
     public void consumeBulletProofVest(Item vest) {
@@ -52,7 +63,7 @@ public class ToCruz extends Character implements IToCruz {
     @Override
     public void attackEnemies(ListADT<Enemy> enemies) {
         for (Enemy enemy : enemies) {
-            enemy.setHealth(enemy.getHealth() - this.getPower());
+            enemy.setPower(enemy.getPower() - this.getPower());
         }
     }
 
@@ -76,5 +87,4 @@ public class ToCruz extends Character implements IToCruz {
             System.out.println("No health kits available!");
         }
     }
-
 }

@@ -14,4 +14,6 @@ public interface IEnemy extends ICharacter {
      */
     void attackToCruz(ToCruz toCruz);
 
+
+
 }
