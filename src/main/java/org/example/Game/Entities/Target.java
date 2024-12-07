@@ -23,5 +23,4 @@ class Target implements ITarget {
     public String getType() {
         return type;
     }
-
 }

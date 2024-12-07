@@ -32,14 +32,6 @@ public class Division implements IDivision {
     }
 
     @Override
-    public String toString() {
-        return "Division{" +
-                "name='" + name + '\'' +
-                ", description='" + (description != null ? description : "No description available") + '\'' +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
