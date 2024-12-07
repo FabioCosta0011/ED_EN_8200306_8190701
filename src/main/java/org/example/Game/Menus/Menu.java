@@ -159,10 +159,10 @@ public class Menu {
 
     // Print the in-game menu
     private void printInGameMenu() {
+        game.displayMissionInfo();
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                   IN-GAME MENU                     ");
         System.out.println("════════════════════════════════════════════════════");
-        game.displayMissionInfo();
         System.out.println("1. Start the Game");
         System.out.println("2. View ToCruz Info");
         System.out.println("3. View Mission Info");

@@ -14,8 +14,8 @@ import java.util.Scanner;
 
 public class Game {
 
-    private Mission mission;
     private final String missionPath;
+    private Mission mission;
     private IToCruz toCruz;
     private Scanner scanner;
     private DifficultyType difficulty;
@@ -210,9 +210,9 @@ public class Game {
 
             // Displaying items in this division
             System.out.println("    Items in this division:");
-            boolean divisionHasItems = false;
-            for (IItem item : mission.getItems()) {
-                if (item.getDivision().equals(division)) {
+            UnorderedListADT<IItem> itemsInDivision = mission.getItemsByDivision(division);  // Use the method here
+            if (!itemsInDivision.isEmpty()) {
+                for (IItem item : itemsInDivision) {
                     System.out.printf("      Item: %s%n", item.getType());
 
                     // Check item type using the enum
@@ -221,26 +221,20 @@ public class Game {
                     } else if (item.getType() == ItemType.BULLET_PROOF_VEST) {
                         System.out.printf("        Extra Points: %d%n", item.getExtraPoints());
                     }
-                    divisionHasItems = true;
                 }
-            }
-
-            if (!divisionHasItems) {
+            } else {
                 System.out.println("      No items in this division.");
             }
 
             // Displaying enemies in this division
             System.out.println("    Enemies in this division:");
-            boolean divisionHasEnemies = false;
-            for (IEnemy enemy : mission.getEnemies()) {
-                if (enemy.getCurrentDivision().equals(division)) {
+            UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(division);  // Use the method here
+            if (!enemiesInDivision.isEmpty()) {
+                for (IEnemy enemy : enemiesInDivision) {
                     System.out.printf("      Enemy: %s%n", enemy.getName());
                     System.out.printf("        Power: %d%n", enemy.getPower());
-                    divisionHasEnemies = true;
                 }
-            }
-
-            if (!divisionHasEnemies) {
+            } else {
                 System.out.println("      No enemies in this division.");
             }
 
