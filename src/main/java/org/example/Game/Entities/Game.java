@@ -238,6 +238,11 @@ public class Game {
                 System.out.println("      No enemies in this division.");
             }
 
+            if (mission.getTarget() != null && mission.getTarget().getDivision().equals(division)) {
+                System.out.printf("    🚩 Target is present in this division: %s%n", mission.getTarget().getType());
+            }
+
+
             System.out.println();
         }
 
