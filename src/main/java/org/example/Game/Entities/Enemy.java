@@ -5,10 +5,8 @@ import org.example.Game.Entities.Interfaces.IEnemy;
 
 public class Enemy extends Character implements IEnemy {
 
-
-
-    public Enemy(String name, int power, int health, IDivision currentDivision) {
-        super(name, power, health, currentDivision);
+    public Enemy(String name, int power, IDivision currentDivision) {
+        super(name, power, currentDivision);
     }
 
     @Override

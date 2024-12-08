@@ -19,19 +19,6 @@ public interface ICharacter {
      */
     int getPower();
 
-    /**
-     * Gets the health level of the enemy.
-     *
-     * @return the health level of the enemy.
-     */
-    int getHealth();
-
-    /**
-     * Sets the health level of the enemy.
-     *
-     * @param health the health level to set.
-     */
-    void setHealth(int health);
 
     /**
      * Gets the division where the enemy is located.

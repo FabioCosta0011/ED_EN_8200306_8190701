@@ -9,14 +9,11 @@ public class Character implements ICharacter {
 
     private int power;
 
-    private int health;
-
     private IDivision currentDivision;
 
-    public Character(String name, int power, int health, IDivision currentDivision) {
+    public Character(String name, int power, IDivision currentDivision) {
         this.name = name;
         this.power = power;
-        this.health = health;
         this.currentDivision = currentDivision;
     }
 
@@ -28,16 +25,6 @@ public class Character implements ICharacter {
     @Override
     public int getPower() {
         return power;
-    }
-
-    @Override
-    public int getHealth() {
-        return health;
-    }
-
-    @Override
-    public void setHealth(int health) {
-        this.health = health;
     }
 
     @Override

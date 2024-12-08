@@ -32,6 +32,34 @@ public interface IToCruz {
     boolean isUsingBulletProofVest();
 
     /**
+     * Gets the health level of the To Cruz.
+     *
+     * @return the health level of the To Cruz.
+     */
+    int getHealth();
+
+    /**
+     * Sets the health level of the To Cruz.
+     *
+     * @param health the health level to set.
+     */
+    void setHealth(int health);
+
+    /**
+     *  Gets the target with To Cruz.
+     *
+     * @return the target with To Cruz.
+     */
+    ITarget getTarget();
+
+    /**
+     * Sets the target with To Cruz.
+     *
+     * @param target the target to set.
+     */
+    void setTarget(ITarget target);
+
+    /**
      * Attacks all the enemies at the same time.
      *
      * @param enemies the list of enemies to attack.

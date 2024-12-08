@@ -61,9 +61,8 @@ public class Game {
         for (JsonNode enemyNode : enemies) {
             String name = enemyNode.get("nome").asText();
             int power = enemyNode.get("poder").asInt();
-            int health = enemyNode.get("vida").asInt();
             String division = enemyNode.get("divisao").asText();
-            IEnemy enemy = new Enemy(name, power, health, new Division(division));
+            IEnemy enemy = new Enemy(name, power, new Division(division));
             mission.getEnemies().addToRear(enemy);
         }
 
@@ -88,7 +87,7 @@ public class Game {
                 mission.getItems().addToRear(item);
             } else if (type.equals("colete")) {
                 int extraPoints = itemNode.get("pontos-extra").asInt();
-                IItem item = Item.createExtraPoints(division, extraPoints);
+                IItem item = Item.createBulletProofVest(division, extraPoints);
                 mission.getItems().addToRear(item);
             }
         }
