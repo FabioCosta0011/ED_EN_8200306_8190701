@@ -13,5 +13,4 @@ public class Enemy extends Character implements IEnemy {
     public void attackToCruz(ToCruz toCruz) {
         toCruz.setHealth(toCruz.getHealth() - this.getPower());
     }
-
 }

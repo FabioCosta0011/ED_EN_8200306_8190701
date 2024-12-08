@@ -1,35 +1,26 @@
 package org.example.Game.Entities;
 
-import org.example.Game.Entities.Interfaces.IDivision;
-import org.example.Game.Entities.Interfaces.IEnemy;
-import org.example.Game.Entities.Interfaces.IItem;
-import org.example.Game.Entities.Interfaces.ITarget;
+import org.example.Game.Entities.Interfaces.*;
 import org.example.Structures.Implementations.ArrayUnorderedList;
 import org.example.Structures.Interfaces.UnorderedListADT;
 
 public class Mission {
 
-    private final String missionCode;
-
-    private final int version;
-
+    private String missionCode;
+    private int version;
     private final BuildingGraph<IDivision> divisions;
-
     private final UnorderedListADT<IEnemy> enemies;
-
     private final UnorderedListADT<IDivision> entryPoints;
-
-    private final ITarget target;
-
+    private ITarget target;
     private final UnorderedListADT<IItem> items;
 
-    public Mission(String missionCode, int version, ITarget target) {
+    public Mission() {
+        this.missionCode = null;
+        this.version = 0;
+        this.target = null;
         this.divisions = new BuildingGraph<>();
-        this.missionCode = missionCode;
-        this.version = version;
         this.enemies = new ArrayUnorderedList<>();
         this.entryPoints = new ArrayUnorderedList<>();
-        this.target = target;
         this.items = new ArrayUnorderedList<>();
     }
 
@@ -37,8 +28,16 @@ public class Mission {
         return missionCode;
     }
 
+    public void setMissionCode(String missionCode){
+        this.missionCode = missionCode;
+    }
+
     public int getVersion() {
         return version;
+    }
+
+    public void setMissionVersion(int version){
+        this.version = version;
     }
 
     public BuildingGraph<IDivision> getDivisions() {
@@ -57,14 +56,17 @@ public class Mission {
         return target;
     }
 
+    public void setMissionTarget(ITarget target){
+        this.target = target;
+    }
+
     public UnorderedListADT<IItem> getItems() {
         return items;
     }
 
-    public ArrayUnorderedList<IEnemy> getEnemiesByDivision(IDivision division) {
-        ArrayUnorderedList<IEnemy> enemiesInDivision = new ArrayUnorderedList<>();
+    public UnorderedListADT<IEnemy> getEnemiesByDivision(IDivision division) {
+        UnorderedListADT<IEnemy> enemiesInDivision = new ArrayUnorderedList<>();
 
-        // Iterar sobre todos os inimigos e adicionar à lista de resultados se pertencerem à divisão
         for (IEnemy enemy : enemies) {
             if (enemy.getCurrentDivision().equals(division)) {
                 enemiesInDivision.addToRear(enemy);
@@ -74,10 +76,9 @@ public class Mission {
         return enemiesInDivision;
     }
 
-    public ArrayUnorderedList<IItem> getItemsByDivision(IDivision division) {
-        ArrayUnorderedList<IItem> itemsInDivision = new ArrayUnorderedList<>();
+    public UnorderedListADT<IItem> getItemsByDivision(IDivision division) {
+        UnorderedListADT<IItem> itemsInDivision = new ArrayUnorderedList<>();
 
-        // Iterar sobre todos os itens e adicionar à lista de resultados se pertencerem à divisão
         for (IItem item : items) {
             if (item.getDivision().equals(division)) {
                 itemsInDivision.addToRear(item);
@@ -86,7 +87,5 @@ public class Mission {
 
         return itemsInDivision;
     }
-
-
-
 }
+

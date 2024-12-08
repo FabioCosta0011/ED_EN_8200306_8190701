@@ -4,13 +4,11 @@ import org.example.Game.Entities.ENUMS.ItemType;
 import org.example.Game.Entities.Interfaces.IDivision;
 import org.example.Game.Entities.Interfaces.ITarget;
 import org.example.Game.Entities.Interfaces.IToCruz;
+import org.example.Structures.Implementations.LinkedStack;
 import org.example.Structures.Interfaces.ListADT;
 import org.example.Structures.Interfaces.StackADT;
 
-
 public class ToCruz extends Character implements IToCruz {
-
-    //TODO create target variable ITarget
 
     private static final int MAX_HEALTH = 100;
 
@@ -22,12 +20,71 @@ public class ToCruz extends Character implements IToCruz {
 
     private boolean isUsingBulletProofVest;
 
-    public ToCruz(String name, int power, int health, IDivision currentDivision, ITarget target, StackADT<Item> healthKits, boolean isUsingBulletProofVest) {
+    public ToCruz(String name, int power, int health, IDivision currentDivision, ITarget target,
+            StackADT<Item> healthKits, boolean isUsingBulletProofVest) {
         super(name, power, currentDivision);
         this.health = health;
         this.target = target;
         this.healthKits = healthKits;
         this.isUsingBulletProofVest = false;
+    }
+
+    public ToCruz(int power, ITarget target, IDivision currentDivision) {
+        super("To Cruz", power, currentDivision);
+        this.health = 100;
+        this.target = target;
+        this.healthKits = new LinkedStack<>();
+        this.isUsingBulletProofVest = false;
+    }
+
+    @Override
+    public int getHealth() {
+        return health;
+    }
+
+    @Override
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    @Override
+    public StackADT<Item> getHealthKits() {
+        return healthKits;
+    }
+
+    public void setMaxHealthKits(int maxHealthKits) {
+        this.maxHealthKits = maxHealthKits;
+    }
+
+    public int getMaxHealthKits() {
+        return maxHealthKits;
+    }
+
+    @Override
+    public IDivision getCurrentDivision() {
+        return super.getCurrentDivision();
+    }
+
+    @Override
+    public boolean isUsingBulletProofVest() {
+        return isUsingBulletProofVest;
+    }
+
+    @Override
+    public void attackEnemies(ListADT<Enemy> enemies) {
+        for (Enemy enemy : enemies) {
+            enemy.setPower(enemy.getPower() - this.getPower());
+        }
+    }
+
+    @Override
+    public ITarget getTarget() {
+        return target;
+    }
+
+    @Override
+    public void setTarget(ITarget target) {
+        this.target = target;
     }
 
     @Override
@@ -47,37 +104,9 @@ public class ToCruz extends Character implements IToCruz {
     }
 
     @Override
-    public StackADT<Item> getHealthKits() {
-        return healthKits;
-    }
-
-    @Override
-    public int getHealth() {
-        return health;
-    }
-
-    @Override
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    public ITarget getTarget() {
-        return target;
-    }
-
-    public void setTarget(ITarget target) {
-        this.target = target;
-    }
-
-    @Override
-    public boolean isUsingBulletProofVest() {
-        return isUsingBulletProofVest;
-    }
-
-    @Override
     public void attackEnemies(ListADT<Enemy> enemies) {
         for (Enemy enemy : enemies) {
-            //TODO enemy.setHealth(enemy.getHealth() - this.getPower());
+            // TODO enemy.setHealth(enemy.getHealth() - this.getPower());
         }
     }
 
@@ -99,6 +128,15 @@ public class ToCruz extends Character implements IToCruz {
             }
         } else {
             System.out.println("No health kits available!");
+        }
+    }
+
+    public void addHealthKit(Item kit) {
+        if (healthKits.size() < maxHealthKits) {
+            healthKits.push(kit);
+            System.out.println("Health kit added! Current kits: " + healthKits.size());
+        } else {
+            System.out.println("Cannot add more health kits. Maximum capacity reached.");
         }
     }
 

@@ -48,6 +48,5 @@ public class Item implements IItem {
     public ItemType getType() {
         return type;
     }
-
 }
 

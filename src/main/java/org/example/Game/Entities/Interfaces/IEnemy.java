@@ -8,10 +8,9 @@ import org.example.Game.Entities.ToCruz;
 public interface IEnemy extends ICharacter {
 
     /**
-     * Attacks the ToCruz entity.
+     * Attacks the ToCruz character.
      *
-     * @param toCruz the ToCruz entity to attack.
+     * @param toCruz the ToCruz character to attack.
      */
     void attackToCruz(ToCruz toCruz);
-
 }

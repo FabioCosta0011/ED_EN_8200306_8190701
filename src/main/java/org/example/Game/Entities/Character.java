@@ -28,6 +28,11 @@ public class Character implements ICharacter {
     }
 
     @Override
+    public void setPower(int power) {
+        this.power = power;
+    }
+
+    @Override
     public IDivision getCurrentDivision() {
         return currentDivision;
     }

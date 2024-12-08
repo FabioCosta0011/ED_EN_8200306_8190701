@@ -6,24 +6,29 @@ package org.example.Game.Entities.Interfaces;
 public interface ICharacter {
 
     /**
-     * Gets the name of the enemy.
+     * Gets the name of the Character.
      *
-     * @return the name of the enemy.
+     * @return the name of the Character.
      */
     String getName();
 
     /**
-     * Gets the power level of the enemy.
+     * Gets the power level of the Character.
      *
-     * @return the power level of the enemy.
+     * @return the power level of the Character.
      */
     int getPower();
 
+    /**
+     * Sets the power level of the Character.
+     *
+     */
+    void setPower(int power);
 
     /**
-     * Gets the division where the enemy is located.
+     * Gets the division where the Character is located.
      *
-     * @return the division of the enemy.
+     * @return the division of the Character.
      */
     IDivision getCurrentDivision();
 }
