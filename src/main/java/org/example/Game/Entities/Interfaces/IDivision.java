@@ -19,5 +19,13 @@ public interface IDivision {
      */
     String getDescription();
 
+    /**
+     * Compares this division with another division to determine their relative order.
+     * This method is typically used for sorting or ordering purposes.
+     *
+     * @param other the other {@link IDivision} instance to compare against.
+     * @return a negative integer if this division is less than the other,
+     *         zero if they are equal, or a positive integer if this division is greater.
+     */
     int compareTo(IDivision other);
 }
