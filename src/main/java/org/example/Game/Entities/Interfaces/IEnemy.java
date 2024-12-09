@@ -12,7 +12,7 @@ public interface IEnemy extends ICharacter {
      *
      * @param toCruz the ToCruz character to attack.
      */
-    void attackToCruz(ToCruz toCruz);
+    void attackToCruz(IToCruz toCruz);
 
     /**
      * Gets the current division (location) of the enemy character in the game.

@@ -19,6 +19,7 @@ public class Game {
     private IToCruz toCruz;
     private Scanner scanner;
     private DifficultyType difficulty;
+    private BuildingGraph<IDivision> buildingGraph;
 
     public Game(String missionPath, Scanner scanner) {
         this.missionPath = missionPath;
@@ -26,6 +27,7 @@ public class Game {
         this.toCruz = null;
         this.scanner = scanner;
         this.difficulty = null;
+        this.buildingGraph = new BuildingGraph<>();
     }
 
     public Mission getMission() {
@@ -152,9 +154,8 @@ public class Game {
                 try {
                     entryPointChoice = Integer.parseInt(scanner.nextLine()) - 1;
 
-                    // Verifica se a escolha está dentro do intervalo válido
                     if (entryPointChoice >= 0 && entryPointChoice < entryPoints.size()) {
-                        validChoice = true;  // A escolha é válida
+                        validChoice = true;
                     } else {
                         System.out.println("Invalid choice! Please select a valid entry point.");
                     }
@@ -164,7 +165,8 @@ public class Game {
             }
 
             IDivision startingDivision = entryPoints.getElement(entryPointChoice);
-            toCruz = new ToCruz(power, startingDivision);
+            toCruz = new ToCruz(power,null, startingDivision);
+            toCruz.setCurrentDivision(startingDivision);
             toCruz.setMaxHealthKits(maxHealthKits);
             this.difficulty = difficulty;
 
@@ -238,22 +240,93 @@ public class Game {
                 System.out.println("      No enemies in this division.");
             }
 
+            if (mission.getTarget() != null && mission.getTarget().getDivision().equals(division)) {
+                System.out.printf("    🚩 Target is present in this division: %s%n", mission.getTarget().getType());
+            }
             System.out.println();
         }
-
-        // End of the mission details display
         System.out.println("════════════════════════════════════════════════════");
     }
 
     public void displayToCruzDetails() {
         System.out.println("════════════════════════════════════════════════════");
-        System.out.println("             TO CRUZ INFO                 ");
+        System.out.println("                    TO CRUZ INFO                    ");
         System.out.println("════════════════════════════════════════════════════");
         System.out.printf("Name            : %s%n", toCruz.getName());
         System.out.printf("Power           : %d%n", toCruz.getPower());
         System.out.printf("Health          : %d%n", toCruz.getHealth());
+        System.out.println("Bullet Proof Vest: " + (toCruz.isUsingBulletProofVest() ? "Yes" : "No"));
         System.out.printf("Difficulty      : %s%n", getDifficultyType());
         System.out.printf("Max Health Kits : %d%n", toCruz.getMaxHealthKits());
+        System.out.println("Number of Health Kits: " + toCruz.getHealthKits().size());
         System.out.printf("Starting Division: %s%n", toCruz.getCurrentDivision().getName());
     }
+
+    public void collectTarget() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        ITarget target = mission.getTarget();
+
+        if (target != null && target.getDivision().equals(currentDivision)) {
+            toCruz.setTarget(target);
+            System.out.println("Target captured successfully!");
+        } else {
+            System.out.println("No target available in this division.");
+        }
+    }
+
+    public void collectItems() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        UnorderedListADT<IItem> itemsInDivision = mission.getItemsByDivision(currentDivision);
+
+        for (IItem item : itemsInDivision) {
+            if (item.getType() == ItemType.LIFE_KIT) {
+                toCruz.addHealthKit(item);
+                mission.getItems().remove(item);
+            } else if (item.getType() == ItemType.BULLET_PROOF_VEST) {
+                toCruz.consumeBulletProofVest(item);
+                mission.getItems().remove(item);
+            }
+        }
+        if (itemsInDivision.isEmpty()) {
+            System.out.println("No items available to pick up in this division.");
+        }
+    }
+
+    public void attackEnemiesInCurrentDivision() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
+
+        if (!enemiesInDivision.isEmpty()) {
+            toCruz.attackEnemies(enemiesInDivision, mission);
+
+            System.out.println("Enemies attacked successfully!");
+        } else {
+            System.out.println("No enemies available in this division to attack!");
+        }
+    }
+
+    public void attackToCruz() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
+
+            if (!enemiesInDivision.isEmpty()) {
+                for (IEnemy enemy : enemiesInDivision) {
+                    enemy.attackToCruz(toCruz);
+                }
+
+                System.out.println("ToCruz attacked by enemies!");
+            } else {
+                System.out.println("No enemies available in this division, to attack To Cruz!");
+            }
+    }
+
+    public boolean hasEnemiesInCurrentDivision() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
+
+        return !enemiesInDivision.isEmpty();
+    }
+
+
+
 }

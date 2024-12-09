@@ -13,6 +13,8 @@ public class Menu {
     private Game game;
     private String missionFile;
     private Division currentDivision;
+    private boolean initialFight = true;
+
 
     public Menu(String missionFile) {
         this.missionFile = missionFile;
@@ -220,12 +222,31 @@ public class Menu {
     // Stub method for starting the game (to be implemented)
     private void startGame() {
         boolean running = true;
+
         while (running) {
+            if (initialFight) {
+                printInGameDivisionFight();
+                initialFight = false;
+            }
+
             printInGameMenu();
             int choice = getValidInGameMenuChoice();
             running = handleInGameMenuChoice(choice);
         }
     }
+
+
+    private void printInGameDivisionFight() {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("           IN-GAME Current Division Fight           ");
+        System.out.println("════════════════════════════════════════════════════");
+
+        game.attackEnemiesInCurrentDivision();
+        game.attackToCruz();
+
+        System.out.println("════════════════════════════════════════════════════");
+    }
+
 
     // Print the in-game menu
     private void printInGameMenu() {
@@ -255,6 +276,10 @@ public class Menu {
 
             case 1:
                 game.attackEnemiesInCurrentDivision();
+
+                if (game.hasEnemiesInCurrentDivision()) {
+                    game.attackToCruz();
+                }
                 return true;
             case 2:
                 game.collectTarget();

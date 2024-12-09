@@ -2,6 +2,7 @@ package org.example.Game.Entities;
 
 import org.example.Game.Entities.Interfaces.IDivision;
 import org.example.Game.Entities.Interfaces.IEnemy;
+import org.example.Game.Entities.Interfaces.IToCruz;
 
 public class Enemy extends Character implements IEnemy {
 
@@ -10,7 +11,7 @@ public class Enemy extends Character implements IEnemy {
     }
 
     @Override
-    public void attackToCruz(ToCruz toCruz) {
+    public void attackToCruz(IToCruz toCruz) {
         toCruz.setHealth(toCruz.getHealth() - this.getPower());
     }
 
