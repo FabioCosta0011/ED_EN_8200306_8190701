@@ -200,14 +200,12 @@ public class Menu {
     private int getValidInGameMenuChoice() {
         while (true) {
             try {
-                // Leitura da entrada e exibindo para debug
                 String input = scanner.nextLine().trim();
-                System.out.println("You entered: " + input);  // Debug line
+                System.out.println("You entered: " + input);
 
-                int choice = Integer.parseInt(input);  // Tenta converter a entrada para número
+                int choice = Integer.parseInt(input);
 
-                // Verifica se o número está dentro do intervalo permitido
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 6 || choice == 7 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -225,7 +223,7 @@ public class Menu {
 
         while (running) {
             if (initialFight) {
-                printInGameDivisionFight();
+                game.printInGameDivisionFight();
                 initialFight = false;
             }
 
@@ -236,20 +234,9 @@ public class Menu {
     }
 
 
-    private void printInGameDivisionFight() {
-        System.out.println("════════════════════════════════════════════════════");
-        System.out.println("           IN-GAME Current Division Fight           ");
-        System.out.println("════════════════════════════════════════════════════");
-
-        game.attackEnemiesInCurrentDivision();
-        game.attackToCruz();
-
-        System.out.println("════════════════════════════════════════════════════");
-    }
-
 
     // Print the in-game menu
-    private void printInGameMenu() {
+    public void printInGameMenu() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                      IN-GAME MENU                  ");
         System.out.println("════════════════════════════════════════════════════");
@@ -266,6 +253,8 @@ public class Menu {
         System.out.println("3. Collect Items");
         System.out.println("4. ToCruz Info");
         System.out.println("5. Use Health Kit");
+        System.out.println("6. Move to near division");
+        System.out.println("7. Finnish Mission");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -292,6 +281,12 @@ public class Menu {
                 return true;
             case 5:
                 game.getToCruz().useHealthKit();
+                return true;
+            case 6:
+                game.moveToNearbyDivision();
+                return true;
+            case 7:
+                game.finalizeMission();
                 return true;
             case 0:
                 System.out.println("Exiting...");

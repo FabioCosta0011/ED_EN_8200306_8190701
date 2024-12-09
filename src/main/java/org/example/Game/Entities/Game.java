@@ -83,6 +83,7 @@ public class Game {
             String divisionName = divisionNode.asText();
             Division division = new Division(divisionName);
             mission.getDivisions().addVertex(division);
+            buildingGraph.addVertex(division);
         }
 
 
@@ -94,6 +95,7 @@ public class Game {
             IDivision fromDivision = new Division(from);
             IDivision toDivision = new Division(to);
             mission.getDivisions().addEdge(fromDivision, toDivision);
+            buildingGraph.addEdge(fromDivision, toDivision);
         }
 
         // Parse enemies
@@ -299,7 +301,7 @@ public class Game {
         if (!enemiesInDivision.isEmpty()) {
             toCruz.attackEnemies(enemiesInDivision, mission);
 
-            System.out.println("Enemies attacked successfully!");
+            System.out.println("To Cruz attack Enemies successfully!");
         } else {
             System.out.println("No enemies available in this division to attack!");
         }
@@ -320,6 +322,49 @@ public class Game {
             }
     }
 
+    public void moveToNearbyDivision() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        ArrayUnorderedList<IDivision> nearbyDivisions = buildingGraph.getNeighbors(currentDivision);
+
+        if (nearbyDivisions.isEmpty()) {
+            System.out.println("No nearby divisions to move to.");
+            return;
+        }
+
+        System.out.println("Nearby Divisions:");
+        for (int i = 0; i < nearbyDivisions.size(); i++) {
+            IDivision division = nearbyDivisions.getElement(i);
+            System.out.printf("%d. %s%n", i + 1, division.getName());
+        }
+
+        System.out.print("Choose a division to move to: ");
+        int choice = getValidDivisionChoice(nearbyDivisions.size());
+
+        IDivision newDivision = nearbyDivisions.getElement(choice - 1);
+
+        if (moveToNewDivision(newDivision)) {
+            System.out.println("You have successfully moved to the new division: " + newDivision.getName());
+        } else {
+            System.out.println("Failed to move to the new division.");
+        }
+    }
+
+    private int getValidDivisionChoice(int size) {
+        while (true) {
+            try {
+                String input = scanner.nextLine().trim();
+                int choice = Integer.parseInt(input);
+                if (choice > 0 && choice <= size) {
+                    return choice;
+                } else {
+                    System.out.println("Invalid choice! Please select a valid division.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number.");
+            }
+        }
+    }
+
     public boolean hasEnemiesInCurrentDivision() {
         IDivision currentDivision = toCruz.getCurrentDivision();
         UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
@@ -327,6 +372,49 @@ public class Game {
         return !enemiesInDivision.isEmpty();
     }
 
+    public void printInGameDivisionFight() {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("           IN-GAME Current Division Fight           ");
+        System.out.println("════════════════════════════════════════════════════");
 
+        attackEnemiesInCurrentDivision();
+        attackToCruz();
 
+        System.out.println("════════════════════════════════════════════════════");
+    }
+
+    public boolean moveToNewDivision(IDivision newDivision) {
+        if (hasEnemiesInCurrentDivision()) {
+            System.out.println("There are enemies in the current division. You cannot move yet.");
+            return false;
+        }
+
+        toCruz.setCurrentDivision(newDivision);
+        System.out.println("You moved to the new division: " + newDivision.getName());
+
+        printInGameDivisionFight();
+        return true;
+    }
+
+    public void finalizeMission() {
+        if (toCruz == null) {
+            System.out.println("ToCruz is not initialized.");
+            return;
+        }
+
+        if (toCruz.getTarget() == null) {
+            System.out.println("Mission cannot be finalized. ToCruz has not captured the target.");
+            return;
+        }
+
+        ArrayUnorderedList<IDivision> entryPoints = (ArrayUnorderedList<IDivision>) mission.getEntryPoints();
+        IDivision currentDivision = toCruz.getCurrentDivision();
+
+        if (!entryPoints.contains(currentDivision)) {
+            System.out.println("Mission cannot be finalized. ToCruz is not in an entry point.");
+            return;
+        }
+
+        System.out.println("Mission finalized successfully!");
+    }
 }

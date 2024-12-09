@@ -13,13 +13,13 @@ import java.util.List;
  * Class representing a division within the game environment.
  */
 public class Division implements IDivision {
-    private String name;  // Name of the division
-    private String description;  // Optional, a description about the division
+    private String name;
+    private String description;
 
     // Constructor with description as optional (can be null)
     public Division(String name) {
         this.name = name;
-        this.description = null; // Default to null if no description is provided
+        this.description = null;
     }
 
     // Constructor that accepts both name and description
@@ -55,7 +55,5 @@ public class Division implements IDivision {
     public int compareTo(IDivision other) {
         return this.name.compareTo(other.getName());
     }
-
-    //TODO FIND NEAR DIVISIONS TO MOVE TO
 
 }
