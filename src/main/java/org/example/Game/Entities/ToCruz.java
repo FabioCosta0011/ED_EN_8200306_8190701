@@ -146,6 +146,9 @@ public class ToCruz extends Character implements IToCruz {
         }
     }
 
-    //TODO MOVE TO NEW DIVISION
+    @Override
+    public boolean isCarryingTarget() {
+        return this.target != null;
+    }
 
 }

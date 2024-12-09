@@ -200,6 +200,15 @@ public class Game {
             System.out.printf("  ▌ Div %d: %s%n", (i + 1), division.getName());
             System.out.println("  ────────────────────────────────────────────────");
 
+            // Display ToCruz's location in the division
+            if (toCruz.getCurrentDivision().equals(division)) {
+                if (toCruz.isCarryingTarget()) {
+                    System.out.println("    🚶 To Cruz is here and is carrying the 🚩 target!");
+                } else {
+                    System.out.println("    🚶 To Cruz is here.");
+                }
+            }
+
             // Displaying connections
             ArrayUnorderedList<IDivision> neighbors = mission.getDivisions().getNeighbors(division);
             if (!neighbors.isEmpty()) {
@@ -245,6 +254,144 @@ public class Game {
             if (mission.getTarget() != null && mission.getTarget().getDivision().equals(division)) {
                 System.out.printf("    🚩 Target is present in this division: %s%n", mission.getTarget().getType());
             }
+            System.out.println();
+        }
+        System.out.println("════════════════════════════════════════════════════");
+    }
+
+    /**
+     * Displays detailed information about the current division where To Cruz is located.
+     */
+    public void displayCurrentDivisionDetails() {
+        IDivision currentDivision = toCruz.getCurrentDivision();
+        System.out.println("               CURRENT DIVISION DETAILS             ");
+        System.out.println("  ────────────────────────────────────────────────");
+        System.out.printf("  ▌ Division: %s%n", currentDivision.getName());
+        System.out.println("  ────────────────────────────────────────────────");
+
+        // Displaying connections
+        ArrayUnorderedList<IDivision> neighbors = mission.getDivisions().getNeighbors(currentDivision);
+        if (!neighbors.isEmpty()) {
+            System.out.println("    Connections:");
+            for (int j = 0; j < neighbors.size(); j++) {
+                IDivision neighbor = neighbors.getElement(j);
+                System.out.printf("      └─> %s%n", neighbor.getName());
+            }
+        } else {
+            System.out.println("    No connections available.");
+        }
+
+        // Displaying items in this division
+        System.out.println("    Items in this division:");
+        UnorderedListADT<IItem> itemsInDivision = mission.getItemsByDivision(currentDivision);
+        if (!itemsInDivision.isEmpty()) {
+            for (IItem item : itemsInDivision) {
+                System.out.printf("      Item: %s%n", item.getType());
+                if (item.getType() == ItemType.LIFE_KIT) {
+                    System.out.printf("        Recovery Points: %d%n", item.getRecoveryPoints());
+                } else if (item.getType() == ItemType.BULLET_PROOF_VEST) {
+                    System.out.printf("        Extra Points: %d%n", item.getExtraPoints());
+                }
+            }
+        } else {
+            System.out.println("      No items in this division.");
+        }
+
+        // Displaying enemies in this division
+        System.out.println("    Enemies in this division:");
+        UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
+        if (!enemiesInDivision.isEmpty()) {
+            for (IEnemy enemy : enemiesInDivision) {
+                System.out.printf("      Enemy: %s%n", enemy.getName());
+                System.out.printf("        Power: %d%n", enemy.getPower());
+            }
+        } else {
+            System.out.println("      No enemies in this division.");
+        }
+
+        // Check if the target is present in this division
+        if (mission.getTarget() != null && mission.getTarget().getDivision().equals(currentDivision)) {
+            System.out.printf("    🚩 Target is present in this division: %s%n", mission.getTarget().getType());
+        }
+
+        // Check if To Cruz is carrying the target
+        if (toCruz.isCarryingTarget()) {
+            System.out.println("    🚶 To Cruz is here and is carrying the 🚩 target!");
+        } else {
+            System.out.println("    🚶 To Cruz is here.");
+        }
+
+        System.out.println("════════════════════════════════════════════════════");
+    }
+
+    /**
+     * Displays detailed information about a list of divisions.
+     *
+     * @param divisions         The list of divisions to display.
+     */
+    public void displayDivisionDetails(ArrayUnorderedList<IDivision> divisions, String title) {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("                  "+ title.toUpperCase() + "                  ");
+        System.out.println("════════════════════════════════════════════════════");
+        for (int i = 0; i < divisions.size(); i++) {
+            IDivision division = divisions.getElement(i);
+            System.out.printf("  ▌ Div %d: %s%n", (i + 1), division.getName());
+            System.out.println("  ────────────────────────────────────────────────");
+
+            // Displaying connections
+            ArrayUnorderedList<IDivision> neighbors = mission.getDivisions().getNeighbors(division);
+            if (!neighbors.isEmpty()) {
+                System.out.println("    Connections:");
+                for (int j = 0; j < neighbors.size(); j++) {
+                    IDivision neighbor = neighbors.getElement(j);
+                    System.out.printf("      └─> %s%n", neighbor.getName());
+                }
+            } else {
+                System.out.println("    No connections available.");
+            }
+
+            // Displaying items in this division
+            System.out.println("    Items in this division:");
+            UnorderedListADT<IItem> itemsInDivision = mission.getItemsByDivision(division);
+            if (!itemsInDivision.isEmpty()) {
+                for (IItem item : itemsInDivision) {
+                    System.out.printf("      Item: %s%n", item.getType());
+                    if (item.getType() == ItemType.LIFE_KIT) {
+                        System.out.printf("        Recovery Points: %d%n", item.getRecoveryPoints());
+                    } else if (item.getType() == ItemType.BULLET_PROOF_VEST) {
+                        System.out.printf("        Extra Points: %d%n", item.getExtraPoints());
+                    }
+                }
+            } else {
+                System.out.println("      No items in this division.");
+            }
+
+            // Displaying enemies in this division
+            System.out.println("    Enemies in this division:");
+            UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(division);
+            if (!enemiesInDivision.isEmpty()) {
+                for (IEnemy enemy : enemiesInDivision) {
+                    System.out.printf("      Enemy: %s%n", enemy.getName());
+                    System.out.printf("        Power: %d%n", enemy.getPower());
+                }
+            } else {
+                System.out.println("      No enemies in this division.");
+            }
+
+            // Check if the target is present in this division
+            if (mission.getTarget() != null && mission.getTarget().getDivision().equals(division)) {
+                System.out.printf("    🚩 Target is present in this division: %s%n", mission.getTarget().getType());
+            }
+
+            // Check if To Cruz is present in this division
+            if (toCruz.getCurrentDivision().equals(division)) {
+                if (toCruz.isCarryingTarget()) {
+                    System.out.println("    🚶 To Cruz is here and is carrying the 🚩 target!");
+                } else {
+                    System.out.println("    🚶 To Cruz is here.");
+                }
+            }
+
             System.out.println();
         }
         System.out.println("════════════════════════════════════════════════════");
@@ -331,11 +478,7 @@ public class Game {
             return;
         }
 
-        System.out.println("Nearby Divisions:");
-        for (int i = 0; i < nearbyDivisions.size(); i++) {
-            IDivision division = nearbyDivisions.getElement(i);
-            System.out.printf("%d. %s%n", i + 1, division.getName());
-        }
+        displayDivisionDetails(nearbyDivisions, "Nearby Divisions");
 
         System.out.print("Choose a division to move to: ");
         int choice = getValidDivisionChoice(nearbyDivisions.size());
