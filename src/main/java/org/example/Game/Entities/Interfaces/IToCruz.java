@@ -2,6 +2,7 @@ package org.example.Game.Entities.Interfaces;
 
 import org.example.Game.Entities.Enemy;
 import org.example.Game.Entities.Item;
+import org.example.Game.Entities.Mission;
 import org.example.Structures.Interfaces.ListADT;
 import org.example.Structures.Interfaces.StackADT;
 
@@ -61,14 +62,14 @@ public interface IToCruz {
      *
      * @param vest the bulletproof vest to be consumed.
      */
-    void consumeBulletProofVest(Item vest);
+    void consumeBulletProofVest(IItem vest);
 
     /**
      * Gets the stack of health kits that the ToCruz character currently has.
      *
      * @return a stack containing the health kits.
      */
-    StackADT<Item> getHealthKits();
+    StackADT<IItem> getHealthKits();
 
     /**
      * Checks if the ToCruz character is currently using a bulletproof vest.
@@ -78,18 +79,11 @@ public interface IToCruz {
     boolean isUsingBulletProofVest();
 
     /**
-     * Gets the health level of the To Cruz.
+     * Sets the flag indicating if the ToCruz character is using a bulletproof vest.
      *
-     * @return the health level of the To Cruz.
+     * @param usingBulletProofVest the flag to set.
      */
-    int getHealth();
-
-    /**
-     * Sets the health level of the To Cruz.
-     *
-     * @param health the health level to set.
-     */
-    void setHealth(int health);
+    void setUsingBulletProofVest(boolean usingBulletProofVest);
 
     /**
      *  Gets the target with To Cruz.
@@ -109,8 +103,9 @@ public interface IToCruz {
      * Attacks all the enemies at the same time.
      *
      * @param enemies the list of enemies to be attacked by the ToCruz character.
+     * @param mission the mission where the enemies are located.
      */
-    void attackEnemies(ListADT<Enemy> enemies);
+    void attackEnemies(ListADT<IEnemy> enemies, Mission mission);
 
     /**
      * Uses the health kit from the top of the health kit stack.
@@ -124,5 +119,19 @@ public interface IToCruz {
      * @return the division where the ToCruz character is currently located.
      */
     IDivision getCurrentDivision();
+
+    /**
+     * Sets the current division (location) of the ToCruz character in the game.
+     *
+     * @param currentDivision the division where the ToCruz character is currently located.
+     */
+    void setCurrentDivision(IDivision currentDivision);
+
+    /**
+     * Adds a health kit to the stack of health kits that the ToCruz character currently has.
+     *
+     * @param healthKit the health kit to be added to the stack.
+     */
+    void addHealthKit (IItem healthKit);
 
 }

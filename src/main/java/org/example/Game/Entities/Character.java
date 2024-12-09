@@ -36,4 +36,9 @@ public class Character implements ICharacter {
     public IDivision getCurrentDivision() {
         return currentDivision;
     }
+
+    @Override
+    public void setCurrentDivision(IDivision division) {
+        this.currentDivision = division;
+    }
 }

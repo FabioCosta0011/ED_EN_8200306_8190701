@@ -1,6 +1,13 @@
 package org.example.Game.Entities;
 
 import org.example.Game.Entities.Interfaces.IDivision;
+import org.example.Game.Entities.Interfaces.IEnemy;
+import org.example.Game.Entities.Interfaces.IItem;
+import org.example.Game.Entities.Interfaces.ITarget;
+import org.example.Structures.Implementations.Graph;
+import org.example.Structures.Interfaces.UnorderedListADT;
+
+import java.util.List;
 
 /**
  * Class representing a division within the game environment.
@@ -48,4 +55,7 @@ public class Division implements IDivision {
     public int compareTo(IDivision other) {
         return this.name.compareTo(other.getName());
     }
+
+    //TODO FIND NEAR DIVISIONS TO MOVE TO
+
 }

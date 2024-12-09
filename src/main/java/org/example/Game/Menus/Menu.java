@@ -1,5 +1,6 @@
 package org.example.Game.Menus;
 
+import org.example.Game.Entities.Division;
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.Game;
 
@@ -11,6 +12,7 @@ public class Menu {
     private final Scanner scanner = new Scanner(System.in);
     private Game game;
     private String missionFile;
+    private Division currentDivision;
 
     public Menu(String missionFile) {
         this.missionFile = missionFile;
@@ -151,17 +153,17 @@ public class Menu {
     private void displayInGameMenu() {
         boolean running = true;
         while (running) {
-            printInGameMenu();
+            printGameMenu();
             int choice = getValidMenuChoice();
-            running = handleInGameMenuChoice(choice);
+            running = handleGameMenuChoice(choice);
         }
     }
 
     // Print the in-game menu
-    private void printInGameMenu() {
+    private void printGameMenu() {
         game.displayMissionInfo();
         System.out.println("════════════════════════════════════════════════════");
-        System.out.println("                   IN-GAME MENU                     ");
+        System.out.println("                      GAME MENU                     ");
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("1. Start the Game");
         System.out.println("2. View ToCruz Info");
@@ -170,8 +172,8 @@ public class Menu {
         System.out.print("Choose an option: ");
     }
 
-    // Handle the in-game menu choice
-    private boolean handleInGameMenuChoice(int choice) {
+    // Handle the game menu choice
+    private boolean handleGameMenuChoice(int choice) {
         switch (choice) {
 
             case 1:
@@ -193,8 +195,89 @@ public class Menu {
         }
     }
 
+    private int getValidInGameMenuChoice() {
+        while (true) {
+            try {
+                // Leitura da entrada e exibindo para debug
+                String input = scanner.nextLine().trim();
+                System.out.println("You entered: " + input);  // Debug line
+
+                int choice = Integer.parseInt(input);  // Tenta converter a entrada para número
+
+                // Verifica se o número está dentro do intervalo permitido
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 0) {
+                    return choice;
+                } else {
+                    System.out.println("Invalid choice! Please select a valid option.");
+                }
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid input! Please enter a number.");
+            }
+        }
+    }
+
     // Stub method for starting the game (to be implemented)
     private void startGame() {
-        System.out.println("Game started... (this is a stub, implement the game logic here).");
+        boolean running = true;
+        while (running) {
+            printInGameMenu();
+            int choice = getValidInGameMenuChoice();
+            running = handleInGameMenuChoice(choice);
+        }
     }
+
+    // Print the in-game menu
+    private void printInGameMenu() {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("                      IN-GAME MENU                  ");
+        System.out.println("════════════════════════════════════════════════════");
+
+        if (game.getToCruz() != null && game.getToCruz().getCurrentDivision() != null) {
+            System.out.printf("Current Division: %s%n", game.getToCruz().getCurrentDivision().getName());
+        } else {
+            System.out.println("Current Division: Not set");
+        }
+
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("1. Attack Enemies");
+        System.out.println("2. Collect Target");
+        System.out.println("3. Collect Items");
+        System.out.println("4. ToCruz Info");
+        System.out.println("5. Use Health Kit");
+        System.out.println("0. Exit");
+        System.out.print("Choose an option: ");
+    }
+
+    // Handle the game menu choice
+    private boolean handleInGameMenuChoice(int choice) {
+        switch (choice) {
+
+            case 1:
+                game.attackEnemiesInCurrentDivision();
+                return true;
+            case 2:
+                game.collectTarget();
+                return true;
+            case 3:
+                game.collectItems();
+                return true;
+            case 4:
+                game.displayToCruzDetails();
+                return true;
+            case 5:
+                game.getToCruz().useHealthKit();
+                return true;
+            case 0:
+                System.out.println("Exiting...");
+                System.exit(0);
+                return false;
+            default:
+                System.out.println("Invalid choice! Please select a valid option.");
+                return true;
+        }
+    }
+
+
+
 }

@@ -31,4 +31,10 @@ public interface ICharacter {
      * @return the division of the Character.
      */
     IDivision getCurrentDivision();
+
+    /**
+     * Sets the division where the Character is located.
+     *
+     */
+    void setCurrentDivision(IDivision division);
 }

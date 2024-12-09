@@ -13,4 +13,14 @@ public class Enemy extends Character implements IEnemy {
     public void attackToCruz(ToCruz toCruz) {
         toCruz.setHealth(toCruz.getHealth() - this.getPower());
     }
+
+    @Override
+    public IDivision getCurrentDivision() {
+        return super.getCurrentDivision();
+    }
+
+    @Override
+    public void setCurrentDivision(IDivision currentDivision) {
+        super.setCurrentDivision(currentDivision);
+    }
 }
