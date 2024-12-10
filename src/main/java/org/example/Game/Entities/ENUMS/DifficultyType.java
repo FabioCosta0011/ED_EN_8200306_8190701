@@ -1,9 +1,9 @@
 package org.example.Game.Entities.ENUMS;
 
 public enum DifficultyType {
-    EASY(100, 8), // Power = 100, Max Health Kits = 8
-    MEDIUM(50, 5), // Power = 50, Max Health Kits = 5
-    HARD(25, 3); // Power = 25, Max Health Kits = 3
+    EASY(15, 8), // Power = 100, Max Health Kits = 8
+    MEDIUM(10, 5), // Power = 50, Max Health Kits = 5
+    HARD(5, 3); // Power = 25, Max Health Kits = 3
 
     private final int power;
     private final int maxHealthKits;
@@ -25,11 +25,11 @@ public enum DifficultyType {
 
     public static DifficultyType fromString(String difficulty) {
         switch (difficulty.toLowerCase()) {
-            case "easy":
+            case "Easy":
                 return EASY;
-            case "medium":
+            case "Medium":
                 return MEDIUM;
-            case "hard":
+            case "Hard":
                 return HARD;
             default:
                 throw new IllegalArgumentException("Invalid difficulty: " + difficulty);

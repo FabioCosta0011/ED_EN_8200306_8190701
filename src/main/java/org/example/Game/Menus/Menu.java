@@ -252,7 +252,7 @@ public class Menu {
         System.out.println("4. ToCruz Info");
         System.out.println("5. Use Health Kit");
         System.out.println("6. Move to near division");
-        System.out.println("7. Finnish Mission");
+        System.out.println("7. Finish Mission");
         System.out.println("8. Building Info");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");

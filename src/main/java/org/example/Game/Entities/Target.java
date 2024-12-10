@@ -9,6 +9,8 @@ class Target implements ITarget {
 
     private String type;
 
+    private boolean isTaken;
+
     public Target(IDivision division, String type) {
         this.division = division;
         this.type = type;
@@ -22,5 +24,15 @@ class Target implements ITarget {
     @Override
     public String getType() {
         return type;
+    }
+
+    @Override
+    public boolean isTaken() {
+        return isTaken;
+    }
+
+    @Override
+    public void takeTarget() {
+        isTaken = true;
     }
 }
