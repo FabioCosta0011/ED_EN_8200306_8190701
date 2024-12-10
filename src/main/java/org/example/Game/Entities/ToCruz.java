@@ -145,4 +145,10 @@ public class ToCruz extends Character implements IToCruz {
             System.out.println("Cannot add more health kits. Maximum capacity reached.");
         }
     }
+
+    @Override
+    public boolean isCarryingTarget() {
+        return this.target != null;
+    }
+
 }

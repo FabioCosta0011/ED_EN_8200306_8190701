@@ -177,7 +177,6 @@ public class Menu {
     // Handle the game menu choice
     private boolean handleGameMenuChoice(int choice) {
         switch (choice) {
-
             case 1:
                 startGame();
                 return false;
@@ -197,6 +196,7 @@ public class Menu {
         }
     }
 
+    // Get a valid InGame input
     private int getValidInGameMenuChoice() {
         while (true) {
             try {
@@ -205,7 +205,7 @@ public class Menu {
 
                 int choice = Integer.parseInt(input);
 
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 6 || choice == 7 || choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 6 || choice == 7 || choice == 8 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -217,7 +217,7 @@ public class Menu {
         }
     }
 
-    // Stub method for starting the game (to be implemented)
+    // Method for starting the game
     private void startGame() {
         boolean running = true;
 
@@ -233,8 +233,6 @@ public class Menu {
         }
     }
 
-
-
     // Print the in-game menu
     public void printInGameMenu() {
         System.out.println("════════════════════════════════════════════════════");
@@ -242,7 +240,7 @@ public class Menu {
         System.out.println("════════════════════════════════════════════════════");
 
         if (game.getToCruz() != null && game.getToCruz().getCurrentDivision() != null) {
-            System.out.printf("Current Division: %s%n", game.getToCruz().getCurrentDivision().getName());
+            game.displayCurrentDivisionDetails();
         } else {
             System.out.println("Current Division: Not set");
         }
@@ -255,6 +253,7 @@ public class Menu {
         System.out.println("5. Use Health Kit");
         System.out.println("6. Move to near division");
         System.out.println("7. Finnish Mission");
+        System.out.println("8. Building Info");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -288,6 +287,9 @@ public class Menu {
             case 7:
                 game.finalizeMission();
                 return true;
+            case 8:
+                game.displayBuildingDetails();
+                return true;
             case 0:
                 System.out.println("Exiting...");
                 System.exit(0);
@@ -297,7 +299,5 @@ public class Menu {
                 return true;
         }
     }
-
-
 
 }

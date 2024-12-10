@@ -134,4 +134,13 @@ public interface IToCruz {
      */
     void addHealthKit (IItem healthKit);
 
+    /**
+     * Checks whether the ToCruz character is currently carrying the target.
+     *
+     * This method verifies if the ToCruz character has an assigned target, which indicates
+     * that the target is in possession of the character.
+     *
+     * @return true if the ToCruz character is carrying the target, false otherwise.
+     */
+    boolean isCarryingTarget();
 }
