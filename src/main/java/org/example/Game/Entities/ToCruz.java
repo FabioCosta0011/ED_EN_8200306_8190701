@@ -145,7 +145,4 @@ public class ToCruz extends Character implements IToCruz {
             System.out.println("Cannot add more health kits. Maximum capacity reached.");
         }
     }
-
-    //TODO MOVE TO NEW DIVISION
-
 }

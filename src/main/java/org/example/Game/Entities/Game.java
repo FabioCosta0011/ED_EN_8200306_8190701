@@ -267,7 +267,12 @@ public class Game {
     public void collectTarget() {
         IDivision currentDivision = toCruz.getCurrentDivision();
         ITarget target = mission.getTarget();
+        UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
 
+        if (!enemiesInDivision.isEmpty()) {
+            System.out.println("Cannot capture the target. Enemies are present in this division.");
+            return;
+        }
         if (target != null && target.getDivision().equals(currentDivision)) {
             toCruz.setTarget(target);
             System.out.println("Target captured successfully!");
@@ -301,7 +306,16 @@ public class Game {
         if (!enemiesInDivision.isEmpty()) {
             toCruz.attackEnemies(enemiesInDivision, mission);
 
-            System.out.println("To Cruz attack Enemies successfully!");
+            UnorderedListADT<IEnemy> allEnemies = mission.getAllEnemies();
+            for (IEnemy currentEnemy : enemiesInDivision) {
+                if (currentEnemy.getPower() > 0) {
+                    for (IEnemy enemy : allEnemies) {
+                        moveEnemyToRandomNearbyDivision(enemy, currentDivision);
+                    }
+                }
+            }
+
+            System.out.println("To Cruz attacked enemies in the current division!");
         } else {
             System.out.println("No enemies available in this division to attack!");
         }
@@ -348,6 +362,33 @@ public class Game {
             System.out.println("Failed to move to the new division.");
         }
     }
+
+    private void moveEnemyToRandomNearbyDivision(IEnemy enemy, IDivision toCruzCurrentDivision) {
+        IDivision currentDivision = enemy.getCurrentDivision();
+        ArrayUnorderedList<IDivision> nearbyDivisions = buildingGraph.getNeighbors(currentDivision);
+
+        if (!nearbyDivisions.isEmpty()) {
+            int randomIndex = (int) (Math.random() * nearbyDivisions.size());
+            IDivision newDivision = nearbyDivisions.getElement(randomIndex);
+
+            enemy.setCurrentDivision(newDivision);
+            System.out.println("════════════════════════════════════════════════════");
+            System.out.printf("Enemy '%s' moved from '%s' to '%s'.%n",
+                    enemy.getName(), currentDivision.getName(), newDivision.getName());
+            System.out.println("════════════════════════════════════════════════════");
+
+            if (newDivision.equals(toCruzCurrentDivision)) {
+                enemy.attackToCruz(toCruz);
+                System.out.println("═══════════════════════════════════════════════");
+                System.out.println("ToCruz attacked by new enemy in this division!");
+                System.out.println("═══════════════════════════════════════════════");
+            }
+        } else {
+            System.out.printf("Enemy '%s' remains in '%s' as there are no nearby divisions.%n",
+                    enemy.getName(), currentDivision.getName());
+        }
+    }
+
 
     private int getValidDivisionChoice(int size) {
         while (true) {

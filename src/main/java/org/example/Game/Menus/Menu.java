@@ -161,7 +161,7 @@ public class Menu {
         }
     }
 
-    // Print the in-game menu
+    // Print the game menu
     private void printGameMenu() {
         game.displayMissionInfo();
         System.out.println("════════════════════════════════════════════════════");

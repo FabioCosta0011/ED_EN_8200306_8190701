@@ -76,6 +76,10 @@ public class Mission {
         return enemiesInDivision;
     }
 
+    public UnorderedListADT<IEnemy> getAllEnemies() {
+        return enemies;
+    }
+
     public UnorderedListADT<IItem> getItemsByDivision(IDivision division) {
         UnorderedListADT<IItem> itemsInDivision = new ArrayUnorderedList<>();
 
