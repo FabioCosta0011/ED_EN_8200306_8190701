@@ -176,7 +176,6 @@ public class Game {
         }
     }
 
-
     public void displayMissionInfo() {
         // Printing mission general information
         System.out.println("════════════════════════════════════════════════════");
@@ -260,7 +259,6 @@ public class Game {
         System.out.println("════════════════════════════════════════════════════");
     }
 
-
     private void displayConnections(IDivision division) {
         ArrayUnorderedList<IDivision> neighbors = mission.getDivisions().getNeighbors(division);
         if (!neighbors.isEmpty()) {
@@ -341,7 +339,6 @@ public class Game {
         System.out.printf("Starting Division: %s%n", toCruz.getCurrentDivision().getName());
     }
 
-
     public void collectTarget() {
         IDivision currentDivision = toCruz.getCurrentDivision();
         ITarget target = mission.getTarget();
@@ -378,21 +375,17 @@ public class Game {
         }
     }
 
-
     public void attackEnemiesInCurrentDivision() {
         IDivision currentDivision = toCruz.getCurrentDivision();
         UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
 
         if (!enemiesInDivision.isEmpty()) {
             toCruz.attackEnemies(enemiesInDivision, mission);
+            attackToCruz();
 
-            UnorderedListADT<IEnemy> allEnemies = mission.getAllEnemies();
-            for (IEnemy currentEnemy : enemiesInDivision) {
-                if (currentEnemy.getPower() > 0) {
-                    for (IEnemy enemy : allEnemies) {
-                        moveEnemyToRandomNearbyDivision(enemy, currentDivision);
-                    }
-                }
+            UnorderedListADT<IEnemy> allEnemiesOutsideCurrentDivision = mission.getAllEnemiesOutsideCurrentDivision(currentDivision, toCruz);
+            for (IEnemy enemy : allEnemiesOutsideCurrentDivision) {
+                moveEnemyToRandomNearbyDivision(enemy, currentDivision);
             }
 
             System.out.println("To Cruz attacked enemies in the current division!");
@@ -415,7 +408,6 @@ public class Game {
                 System.out.println("No enemies available in this division, to attack To Cruz!");
             }
     }
-
 
     public void moveToNearbyDivision() {
         IDivision currentDivision = toCruz.getCurrentDivision();
@@ -479,7 +471,6 @@ public class Game {
         return true;
     }
 
-
     private int getValidDivisionChoice(int size) {
         while (true) {
             try {
@@ -509,7 +500,6 @@ public class Game {
         System.out.println("════════════════════════════════════════════════════");
 
         attackEnemiesInCurrentDivision();
-        attackToCruz();
 
         System.out.println("════════════════════════════════════════════════════");
     }
@@ -535,4 +525,14 @@ public class Game {
 
         System.out.println("Mission finalized successfully!");
     }
+
+    public boolean toCruzDies() {
+        if (toCruz.getHealth() <= 0) {
+            System.out.println("ToCruz has died! Game Over!");
+            return true;
+        }
+        return false;
+    }
+
+
 }

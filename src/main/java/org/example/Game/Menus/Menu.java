@@ -130,9 +130,12 @@ public class Menu {
     // Map the input to a DifficultyType
     private DifficultyType mapInputToDifficulty(int input) {
         switch (input) {
-            case 1: return DifficultyType.EASY;
-            case 2: return DifficultyType.MEDIUM;
-            case 3: return DifficultyType.HARD;
+            case 1:
+                return DifficultyType.EASY;
+            case 2:
+                return DifficultyType.MEDIUM;
+            case 3:
+                return DifficultyType.HARD;
             default:
                 System.out.println("Invalid input! Defaulting to Medium difficulty.");
                 return DifficultyType.MEDIUM;
@@ -205,7 +208,7 @@ public class Menu {
 
                 int choice = Integer.parseInt(input);
 
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||choice == 5 ||choice == 6 || choice == 7 || choice == 8 || choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6 || choice == 7 || choice == 8 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -235,6 +238,9 @@ public class Menu {
 
     // Print the in-game menu
     public void printInGameMenu() {
+        if (game.toCruzDies()) {
+            System.exit(0);
+        }
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                      IN-GAME MENU                  ");
         System.out.println("════════════════════════════════════════════════════");
@@ -264,10 +270,6 @@ public class Menu {
 
             case 1:
                 game.attackEnemiesInCurrentDivision();
-
-                if (game.hasEnemiesInCurrentDivision()) {
-                    game.attackToCruz();
-                }
                 return true;
             case 2:
                 game.collectTarget();
@@ -299,5 +301,5 @@ public class Menu {
                 return true;
         }
     }
-
 }
+

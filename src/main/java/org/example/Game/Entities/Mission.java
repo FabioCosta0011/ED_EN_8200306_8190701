@@ -80,6 +80,17 @@ public class Mission {
         return enemies;
     }
 
+    public UnorderedListADT<IEnemy> getAllEnemiesOutsideCurrentDivision(IDivision division, IToCruz toCruz) {
+        UnorderedListADT<IEnemy> enemiesOutsideDivision = new ArrayUnorderedList<>();
+
+        for (IEnemy enemy : enemies) {
+            if (!enemy.getCurrentDivision().equals(toCruz.getCurrentDivision())) {
+                enemiesOutsideDivision.addToRear(enemy);
+            }
+        }
+        return enemiesOutsideDivision;
+    }
+
     public UnorderedListADT<IItem> getItemsByDivision(IDivision division) {
         UnorderedListADT<IItem> itemsInDivision = new ArrayUnorderedList<>();
 
