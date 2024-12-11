@@ -167,7 +167,7 @@ public class Game {
             }
 
             IDivision startingDivision = entryPoints.getElement(entryPointChoice);
-            toCruz = new ToCruz(power,null, startingDivision);
+            toCruz = new ToCruz(power, null, startingDivision);
             toCruz.setCurrentDivision(startingDivision);
             toCruz.setMaxHealthKits(maxHealthKits);
             this.difficulty = difficulty;
@@ -236,7 +236,7 @@ public class Game {
     /**
      * Displays detailed information about a list of divisions.
      *
-     * @param divisions         The list of divisions to display.
+     * @param divisions The list of divisions to display.
      */
     public void displayNearbyDivisionsDetails(ArrayUnorderedList<IDivision> divisions) {
         System.out.println("════════════════════════════════════════════════════");
@@ -398,15 +398,15 @@ public class Game {
         IDivision currentDivision = toCruz.getCurrentDivision();
         UnorderedListADT<IEnemy> enemiesInDivision = mission.getEnemiesByDivision(currentDivision);
 
-            if (!enemiesInDivision.isEmpty()) {
-                for (IEnemy enemy : enemiesInDivision) {
-                    enemy.attackToCruz(toCruz);
-                }
-
-                System.out.println("ToCruz attacked by enemies!");
-            } else {
-                System.out.println("No enemies available in this division, to attack To Cruz!");
+        if (!enemiesInDivision.isEmpty()) {
+            for (IEnemy enemy : enemiesInDivision) {
+                enemy.attackToCruz(toCruz);
             }
+
+            System.out.println("ToCruz attacked by enemies!");
+        } else {
+            System.out.println("No enemies available in this division, to attack To Cruz!");
+        }
     }
 
     public void moveToNearbyDivision() {
@@ -534,5 +534,25 @@ public class Game {
         return false;
     }
 
+    public void displayBestPathToTarget() {
+        new ArrayUnorderedList<>();
+        UnorderedListADT<IDivision> bestPath = mission.findBestPathToTarget(toCruz.getCurrentDivision(), mission.getTarget().getDivision());
 
+        if (!bestPath.isEmpty()) {
+            System.out.println("════════════════════════════════════════════════════");
+            System.out.println("                 Best path to target                ");
+            System.out.println("════════════════════════════════════════════════════");
+
+            IDivision previous = null;
+            for (IDivision division : bestPath) {
+                if (previous != null) {
+                    System.out.print("└─> ");
+                }
+                System.out.println(division.getName());
+                previous = division;
+            }
+        } else {
+            System.out.println("Cant find an path to target.");
+        }
+    }
 }

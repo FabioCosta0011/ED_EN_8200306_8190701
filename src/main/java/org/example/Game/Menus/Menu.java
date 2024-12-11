@@ -3,7 +3,7 @@ package org.example.Game.Menus;
 import org.example.Game.Entities.Division;
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.Game;
-import org.example.Game.Entities.MissionSimulation;
+import org.example.Game.Entities.Mission;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -295,8 +295,7 @@ public class Menu {
                 game.displayBuildingDetails();
                 return true;
             case 9:
-                MissionSimulation missionSimulation = new MissionSimulation(game.getMission());
-                System.out.println(missionSimulation.findBestPath(game.getToCruz().getCurrentDivision(), game.getMission().getTarget().getDivision()).toString());
+                game.displayBestPathToTarget();
                 return true;
             case 0:
                 System.out.println("Exiting...");

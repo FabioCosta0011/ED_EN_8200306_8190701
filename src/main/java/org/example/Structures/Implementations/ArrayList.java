@@ -168,7 +168,7 @@ public class ArrayList<T> implements ListADT<T> {
      * @param target the element to find
      * @return the index of the element, or NOT_FOUND if the element is not found
      */
-    private int find(T target) {
+    public int find(T target) {
         int scan = 0, result = NOT_FOUND;
         boolean found = false;
 
