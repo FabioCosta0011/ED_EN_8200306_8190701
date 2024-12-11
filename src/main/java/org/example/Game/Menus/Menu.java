@@ -3,6 +3,7 @@ package org.example.Game.Menus;
 import org.example.Game.Entities.Division;
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.Game;
+import org.example.Game.Entities.MissionSimulation;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -208,7 +209,7 @@ public class Menu {
 
                 int choice = Integer.parseInt(input);
 
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6 || choice == 7 || choice == 8 || choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6 || choice == 7 || choice == 8 || choice == 9 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -260,6 +261,7 @@ public class Menu {
         System.out.println("6. Move to near division");
         System.out.println("7. Finish Mission");
         System.out.println("8. Building Info");
+        System.out.println("9. Best Path to Target");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -291,6 +293,10 @@ public class Menu {
                 return true;
             case 8:
                 game.displayBuildingDetails();
+                return true;
+            case 9:
+                MissionSimulation missionSimulation = new MissionSimulation(game.getMission());
+                System.out.println(missionSimulation.findBestPath(game.getToCruz().getCurrentDivision(), game.getMission().getTarget().getDivision()).toString());
                 return true;
             case 0:
                 System.out.println("Exiting...");

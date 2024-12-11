@@ -56,4 +56,10 @@ public class Division implements IDivision {
         return this.name.compareTo(other.getName());
     }
 
+    @Override
+    public String toString() {
+        return "Division{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
