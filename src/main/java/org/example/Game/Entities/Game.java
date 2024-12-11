@@ -540,7 +540,7 @@ public class Game {
 
         if (!bestPath.isEmpty()) {
             System.out.println("════════════════════════════════════════════════════");
-            System.out.println("                 Best path to target                ");
+            System.out.println("                 BEST PATH TO TARGET                ");
             System.out.println("════════════════════════════════════════════════════");
 
             IDivision previous = null;
@@ -553,6 +553,28 @@ public class Game {
             }
         } else {
             System.out.println("Cant find an path to target.");
+        }
+    }
+
+    public void displayBestPathToNearLifeItem() {
+        new ArrayUnorderedList<>();
+        UnorderedListADT<IDivision> bestPath = mission.findBestPathToLifeKit(toCruz.getCurrentDivision());
+
+        if (!bestPath.isEmpty()) {
+            System.out.println("════════════════════════════════════════════════════");
+            System.out.println("              BEST PATH TO NEAR LIFE ITEM           ");
+            System.out.println("════════════════════════════════════════════════════");
+
+            IDivision previous = null;
+            for (IDivision division : bestPath) {
+                if (previous != null) {
+                    System.out.print("└─> ");
+                }
+                System.out.println(division.getName());
+                previous = division;
+            }
+        } else {
+            System.out.println("Cant find an path to near life item.");
         }
     }
 }

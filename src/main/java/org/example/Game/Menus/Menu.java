@@ -209,7 +209,7 @@ public class Menu {
 
                 int choice = Integer.parseInt(input);
 
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6 || choice == 7 || choice == 8 || choice == 9 || choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6 || choice == 7 || choice == 8 || choice == 9 || choice == 10 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -262,6 +262,7 @@ public class Menu {
         System.out.println("7. Finish Mission");
         System.out.println("8. Building Info");
         System.out.println("9. Best Path to Target");
+        System.out.println("10. Best Path to Near Life Item");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -296,6 +297,9 @@ public class Menu {
                 return true;
             case 9:
                 game.displayBestPathToTarget();
+                return true;
+            case 10:
+                game.displayBestPathToNearLifeItem();
                 return true;
             case 0:
                 System.out.println("Exiting...");

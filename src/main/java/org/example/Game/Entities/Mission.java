@@ -31,7 +31,7 @@ public class Mission {
         return missionCode;
     }
 
-    public void setMissionCode(String missionCode){
+    public void setMissionCode(String missionCode) {
         this.missionCode = missionCode;
     }
 
@@ -39,7 +39,7 @@ public class Mission {
         return version;
     }
 
-    public void setMissionVersion(int version){
+    public void setMissionVersion(int version) {
         this.version = version;
     }
 
@@ -59,7 +59,7 @@ public class Mission {
         return target;
     }
 
-    public void setMissionTarget(ITarget target){
+    public void setMissionTarget(ITarget target) {
         this.target = target;
     }
 
@@ -193,6 +193,68 @@ public class Mission {
             }
         }
         return points;
+    }
+
+    public UnorderedListADT<IDivision> findBestPathToLifeKit(IDivision currentDivision) {
+        QueueADT<IDivision> queue = new LinkedQueue<>();
+        ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
+        ArrayUnorderedList<Integer> pointsRemaining = new ArrayUnorderedList<>();
+        ArrayUnorderedList<IDivision> predecessors = new ArrayUnorderedList<>();
+
+        queue.enqueue(currentDivision);
+        visited.addToFront(currentDivision);
+        pointsRemaining.addToRear(100);
+        predecessors.addToRear(null);
+
+        while (!queue.isEmpty()) {
+            IDivision current = queue.dequeue();
+            int currentPoints = pointsRemaining.getElement(visited.find(current));
+
+            ArrayUnorderedList<IItem> items = (ArrayUnorderedList<IItem>) this.getItemsByDivision(current);
+                if (hasItems(current)) {
+                    return reconstructPath(predecessors, visited, current);
+            }
+
+            ArrayUnorderedList<IDivision> neighbors = this.getDivisions().getNeighbors(current);
+            for (IDivision neighbor : neighbors) {
+                if (visited.contains(neighbor)) {
+                    continue;
+                }
+
+                int pointsImpact = calculateImpact(neighbor);
+
+                if (currentPoints + pointsImpact > 0) {
+                    int newPoints = currentPoints + pointsImpact;
+
+                    pointsRemaining.addToRear(newPoints);
+                    predecessors.addToRear(current);
+                    queue.enqueue(neighbor);
+                    visited.addToRear(neighbor);
+                }
+            }
+        }
+        return new ArrayUnorderedList<>();
+    }
+
+    private UnorderedListADT<IDivision> reconstructPath(ArrayUnorderedList<IDivision> predecessors,
+                                                        ArrayUnorderedList<IDivision> visited,
+                                                        IDivision target) {
+        UnorderedListADT<IDivision> path = new ArrayUnorderedList<>();
+        IDivision step = target;
+
+        while (step != null) {
+            path.addToFront(step);
+            int predecessorIndex = visited.find(step);
+            step = predecessors.getElement(predecessorIndex);
+        }
+
+        return path;
+    }
+
+
+    private boolean hasItems(IDivision division) {
+        UnorderedListADT<IItem> itemsInDivision = this.getItemsByDivision(division);
+        return !itemsInDivision.isEmpty();
     }
 
 }
