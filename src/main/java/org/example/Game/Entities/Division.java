@@ -10,32 +10,41 @@ import org.example.Structures.Interfaces.UnorderedListADT;
 import java.util.List;
 
 /**
- * Class representing a division within the game environment.
+ * The Division class represents a division within the game environment, providing methods for managing and interacting
+ * with the division, including its name and description.
  */
 public class Division implements IDivision {
-    private String name;
-    private String description;
 
+    /**
+     * The name of the division.
+     */
+    private final String name;
+
+    /**
+     * Constructor to create a new Division with the given name.
+     *
+     * @param name The name of the division.
+     */
     public Division(String name) {
         this.name = name;
-        this.description = null;
     }
 
-    public Division(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
+    /**
+     * Gets the name of the division.
+     *
+     * @return The name of the division.
+     */
     @Override
     public String getName() {
         return name;
     }
 
-    @Override
-    public String getDescription() {
-        return "";
-    }
-
+    /**
+     * Compares this division to another division by their names.
+     *
+     * @param obj The object to compare to.
+     * @return true if both divisions have the same name, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -44,11 +53,13 @@ public class Division implements IDivision {
         return name.equals(division.name);
     }
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
+    /**
+     * Compares this division to another division.
+     *
+     * @param other The division to compare to.
+     * @return A negative integer, zero, or a positive integer as this division's name is lexicographically less than,
+     *         equal to, or greater than the specified division's name.
+     */
     @Override
     public int compareTo(IDivision other) {
         return this.name.compareTo(other.getName());

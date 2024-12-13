@@ -6,19 +6,48 @@ import org.example.Game.Entities.Game;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The Menu class handles the user interface for the game, presenting the main menu,
+ * the game selection, difficulty selection, and in-game actions. It also handles
+ * loading the mission file and initiating the game logic.
+ */
 public class Menu {
 
+    /**
+     * Scanner object for reading user input from the console.
+     */
     private final Scanner scanner = new Scanner(System.in);
+
+    /**
+     * The Game instance that handles the logic and state of the game.
+     */
     private Game game;
-    private String missionFile;
+
+    /**
+     * The file path for the mission file to be loaded into the game.
+     */
+    private final String missionFile;
+
+    /**
+     * Flag that indicates if it is the first fight of the game.
+     * This is used to display specific content during the initial fight.
+     */
     private boolean initialFight = true;
 
 
+    /**
+     * Constructor for the Menu class.
+     * Initializes the mission file which will be loaded later.
+     *
+     * @param missionFile The mission file to be loaded.
+     */
     public Menu(String missionFile) {
         this.missionFile = missionFile;
     }
 
-    // Start the menu system
+    /**
+     * Displays the main menu and processes the user's input.
+     */
     public void displayMenu() {
         while (true) {
             printMainMenu();
@@ -27,7 +56,9 @@ public class Menu {
         }
     }
 
-    // Print the main menu
+    /**
+     * Prints the main menu with available game options.
+     */
     private void printMainMenu() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                       MENU                         ");
@@ -38,6 +69,11 @@ public class Menu {
         System.out.print("Choose an option: ");
     }
 
+    /**
+     * Prompts the user for a valid menu option and returns it.
+     *
+     * @return The user's choice.
+     */
     private int getValidMenuChoice() {
         while (true) {
             try {
@@ -58,7 +94,11 @@ public class Menu {
         }
     }
 
-    // Handle the main menu choice
+    /**
+     * Processes the user's choice from the main menu.
+     *
+     * @param choice The user's selected option.
+     */
     private void handleMainMenuChoice(int choice) {
         switch (choice) {
             case 1:
@@ -76,6 +116,9 @@ public class Menu {
         }
     }
 
+    /**
+     * Displays the mission records.
+     */
     private void displayMissionRecords() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                   MISSION RECORDS                  ");
@@ -84,7 +127,9 @@ public class Menu {
         game.displayMissionRecordsDetails();
     }
 
-    // Start the manual game and show the in-game menu
+    /**
+     * Starts the manual game and shows the game menu.
+     */
     private void startManualGame() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("               STARTING MANUAL GAME                 ");
@@ -94,7 +139,9 @@ public class Menu {
         showDifficultySelection();
     }
 
-    // Start the automatic game and show the in-game menu
+    /**
+     * Starts the automatic game and shows the game menu.
+     */
     private void startAutomaticGame() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("               STARTING AUTOMATIC GAME              ");
@@ -105,7 +152,9 @@ public class Menu {
 
     }
 
-    // Load the mission and show details
+    /**
+     * Loads the mission and displays the mission details.
+     */
     private void loadMissionAndShowDetails() {
         try {
             game = new Game(this.missionFile, this.scanner);
@@ -118,13 +167,19 @@ public class Menu {
         }
     }
 
-    // Show the difficulty selection
+    /**
+     * Displays the difficulty selection menu.
+     */
     private void showDifficultySelection() {
         DifficultyType difficulty = getDifficultyFromUser();
         createGameWithDifficulty(difficulty);
     }
 
-    // Get difficulty input from the user
+    /**
+     * Prompts the user to select a difficulty level.
+     *
+     * @return The selected difficulty type.
+     */
     private DifficultyType getDifficultyFromUser() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                    SELECT DIFFICULTY               ");
@@ -134,7 +189,11 @@ public class Menu {
         return mapInputToDifficulty(difficultyInput);
     }
 
-    // Get a valid difficulty input
+    /**
+     * Prompts the user for a valid difficulty input.
+     *
+     * @return The difficulty level (1, 2, or 3).
+     */
     private int getValidDifficultyInput() {
         while (true) {
             System.out.print("Choose difficulty level (1 - Easy, 2 - Medium, 3 - Hard): ");
@@ -151,7 +210,12 @@ public class Menu {
         }
     }
 
-    // Map the input to a DifficultyType
+    /**
+     * Maps the numerical input to the corresponding difficulty type.
+     *
+     * @param input The difficulty level number (1, 2, or 3).
+     * @return The corresponding difficulty type.
+     */
     private DifficultyType mapInputToDifficulty(int input) {
         switch (input) {
             case 1:
@@ -166,7 +230,11 @@ public class Menu {
         }
     }
 
-    // Create the game with the selected difficulty
+    /**
+     * Creates the game with the selected difficulty level.
+     *
+     * @param difficulty The selected difficulty.
+     */
     private void createGameWithDifficulty(DifficultyType difficulty) {
         System.out.println("Loading game with difficulty: " + difficulty);
         try {
@@ -178,7 +246,9 @@ public class Menu {
         }
     }
 
-    // Display the in-game menu with options
+    /**
+     * Displays the in-game menu with available options.
+     */
     private void displayInGameMenu() {
         boolean running = true;
         while (running) {
@@ -188,7 +258,9 @@ public class Menu {
         }
     }
 
-    // Print the game menu
+    /**
+     * Prints the game menu.
+     */
     private void printGameMenu() {
         game.displayMissionInfo();
         System.out.println("════════════════════════════════════════════════════");
@@ -196,13 +268,18 @@ public class Menu {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("1. Start the Game");
         System.out.println("2. View ToCruz Info");
-        System.out.println("3. View Mission Info");
+        System.out.println("3. View Mission Info and Building Layout");
         System.out.println("4. View Missions Records");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
 
-    // Handle the game menu choice
+    /**
+     * Processes the user's choice from the in-game menu.
+     *
+     * @param choice The option chosen by the user.
+     * @return Returns a boolean indicating whether the menu should continue.
+     */
     private boolean handleGameMenuChoice(int choice) {
         switch (choice) {
             case 1:
@@ -227,7 +304,9 @@ public class Menu {
         }
     }
 
-    // Get a valid InGame input
+    /**
+     * Starts the game and processes in-game actions.
+     */
     private int getValidInGameMenuChoice() {
         while (true) {
             try {
@@ -248,7 +327,9 @@ public class Menu {
         }
     }
 
-    // Method for starting the game
+    /**
+     * Prints the in-game action menu with available options.
+     */
     private void startGame() {
         boolean running = true;
 
@@ -264,7 +345,9 @@ public class Menu {
         }
     }
 
-    // Print the in-game menu
+    /**
+     * Prints the in-game menu.
+     */
     public void printInGameMenu() {
         if (game.toCruzDies()) {
             System.exit(0);
@@ -294,7 +377,12 @@ public class Menu {
         System.out.print("Choose an option: ");
     }
 
-    // Handle the game menu choice
+    /**
+     * Processes the user's choice from the in-game action menu.
+     *
+     * @param choice The option chosen by the user.
+     * @return Returns a boolean indicating whether the menu should continue.
+     */
     private boolean handleInGameMenuChoice(int choice) {
         switch (choice) {
 

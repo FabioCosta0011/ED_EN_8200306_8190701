@@ -29,5 +29,5 @@ public interface ITarget {
      * to indicate that it has been captured or taken by an entity. Once the target
      * is marked as taken, it should not be available for interaction by other entities.
      */
-    public void takeTarget();
+    void takeTarget();
 }

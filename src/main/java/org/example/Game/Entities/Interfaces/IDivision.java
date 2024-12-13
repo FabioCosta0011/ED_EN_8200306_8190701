@@ -13,19 +13,12 @@ public interface IDivision {
     String getName();
 
     /**
-     * Gets the description of the division (optional).
-     *
-     * @return the description of the division.
-     */
-    String getDescription();
-
-    /**
      * Indicates whether some other division is "equal to" this one.
      *
      * @param obj the reference object with which to compare.
      * @return true if this division is the same as the obj argument; false otherwise.
      */
-    public boolean equals(Object obj);
+    boolean equals(Object obj);
 
     /**
      * Compares the division to another division.
