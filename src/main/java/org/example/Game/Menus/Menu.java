@@ -2,8 +2,6 @@ package org.example.Game.Menus;
 
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.Game;
-import org.example.Game.Entities.Interfaces.IDivision;
-import org.example.Structures.Implementations.ArrayUnorderedList;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -86,7 +84,7 @@ public class Menu {
         game.displayMissionRecordsDetails();
     }
 
-    // Start the game and show the in-game menu
+    // Start the manual game and show the in-game menu
     private void startManualGame() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("               STARTING MANUAL GAME                 ");
@@ -96,6 +94,7 @@ public class Menu {
         showDifficultySelection();
     }
 
+    // Start the automatic game and show the in-game menu
     private void startAutomaticGame() {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("               STARTING AUTOMATIC GAME              ");
@@ -172,7 +171,7 @@ public class Menu {
         System.out.println("Loading game with difficulty: " + difficulty);
         try {
             game.createToCruzCharacter(difficulty);
-            displayInGameMenu();  // Show the in-game menu after creating ToCruz
+            displayInGameMenu();
         } catch (IOException e) {
             System.err.println("Error creating ToCruz character: " + e.getMessage());
             e.printStackTrace();

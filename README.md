@@ -76,6 +76,13 @@ Este projeto demonstra como combinar as técnicas do BFS e Dijkstra para resolve
 
 ---
 
+## Repositório do Projeto
+
+O código-fonte deste projeto está disponível no seguinte repositório Git:  
+[GitHub - ED_EN_8200306_8190701](https://github.com/usuario/repositorio-exemplo)
+
+---
+
 ## Referências
 
 Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022). *Introduction to algorithms* (4th ed.). MIT Press.

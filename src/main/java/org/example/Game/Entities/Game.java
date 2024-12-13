@@ -62,7 +62,6 @@ public class Game {
     }
 
     public Mission loadMissionFromJson() throws IOException {
-        // Load the JSON file from resources
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(missionPath);
 
         if (inputStream == null) {
@@ -82,7 +81,7 @@ public class Game {
         JsonNode targetNode = root.get("alvo");
         String targetDivision = targetNode.get("divisao").asText();
         // Map the target type manually to match enum
-        String targetType = targetNode.get("tipo").asText();  // Mapping string to enum value
+        String targetType = targetNode.get("tipo").asText();
         ITarget target = new Target(new Division(targetDivision), targetType);
         mission.setMissionTarget(target);
 

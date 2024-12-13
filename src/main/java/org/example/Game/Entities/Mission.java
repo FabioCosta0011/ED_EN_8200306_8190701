@@ -5,10 +5,9 @@ import org.example.Game.Entities.Interfaces.*;
 import org.example.Structures.Implementations.ArrayOrderedList;
 import org.example.Structures.Implementations.ArrayUnorderedList;
 import org.example.Structures.Implementations.LinkedQueue;
-import org.example.Structures.Implementations.LinkedStack;
 import org.example.Structures.Interfaces.*;
 
-public class Mission {
+public class Mission implements IMission {
 
     private String missionCode;
     private int version;
@@ -31,58 +30,72 @@ public class Mission {
         this.records = new ArrayOrderedList<>();
     }
 
+    @Override
     public String getMissionCode() {
         return missionCode;
     }
 
+    @Override
     public void setMissionCode(String missionCode) {
         this.missionCode = missionCode;
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
 
+    @Override
     public void setMissionVersion(int version) {
         this.version = version;
     }
 
+    @Override
     public BuildingGraph<IDivision> getDivisions() {
         return divisions;
     }
 
+    @Override
     public UnorderedListADT<IEnemy> getEnemies() {
         return enemies;
     }
 
+    @Override
     public UnorderedListADT<IDivision> getEntryPoints() {
         return entryPoints;
     }
 
+    @Override
     public ITarget getTarget() {
         return target;
     }
 
+    @Override
     public int getPoints() {
         return points;
     }
 
+    @Override
     public void setPoints(int points) {
         this.points = points;
     }
 
+    @Override
     public OrderedListADT<IRecord> getRecords() {
         return records;
     }
 
+    @Override
     public void setMissionTarget(ITarget target) {
         this.target = target;
     }
 
+    @Override
     public UnorderedListADT<IItem> getItems() {
         return items;
     }
 
+    @Override
     public UnorderedListADT<IEnemy> getEnemiesByDivision(IDivision division) {
         UnorderedListADT<IEnemy> enemiesInDivision = new ArrayUnorderedList<>();
 
@@ -95,6 +108,7 @@ public class Mission {
         return enemiesInDivision;
     }
 
+    @Override
     public UnorderedListADT<IEnemy> getAllEnemiesOutsideCurrentDivision(IDivision division, IToCruz toCruz) {
         UnorderedListADT<IEnemy> enemiesOutsideDivision = new ArrayUnorderedList<>();
 
@@ -106,6 +120,7 @@ public class Mission {
         return enemiesOutsideDivision;
     }
 
+    @Override
     public UnorderedListADT<IItem> getItemsByDivision(IDivision division) {
         UnorderedListADT<IItem> itemsInDivision = new ArrayUnorderedList<>();
 
@@ -118,6 +133,7 @@ public class Mission {
         return itemsInDivision;
     }
 
+    @Override
     public QueueADT<IDivision> findBestPath(IDivision currentDivision, IDivision targetDivision) {
         QueueADT<IDivision> queue = new LinkedQueue<>();
         ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
@@ -167,6 +183,7 @@ public class Mission {
         return bestPath;
     }
 
+    @Override
     public UnorderedListADT<IDivision> findBestPathToLifeKit(IDivision currentDivision) {
         QueueADT<IDivision> queue = new LinkedQueue<>();
         ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
@@ -208,6 +225,7 @@ public class Mission {
         return new ArrayUnorderedList<>();
     }
 
+    @Override
     public QueueADT<IDivision> findBestRouteFromMultipleEntryPoints(UnorderedListADT<IDivision> entryPoints, IDivision targetDivision) {
         QueueADT<IDivision> bestPathToTarget = null;
         int maxPointsToTarget = -1;
@@ -265,13 +283,14 @@ public class Mission {
         return null; // Se não houver caminho válido
     }
 
-    public QueueADT<IDivision> verifyPathToEntry(QueueADT<IDivision> pathStack, int initialPoints) {
+    @Override
+    public QueueADT<IDivision> verifyPathToEntry(QueueADT<IDivision> pathQueue, int initialPoints) {
         QueueADT<IDivision> verifiedPath = new LinkedQueue<>();
         ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
         int pointsRemaining = initialPoints;
 
-        while (!pathStack.isEmpty()) {
-            IDivision current = pathStack.dequeue();
+        while (!pathQueue.isEmpty()) {
+            IDivision current = pathQueue.dequeue();
 
             if (visited.contains(current)) {
                 break;
@@ -295,6 +314,7 @@ public class Mission {
         return verifiedPath;
     }
 
+
     private int calculateImpact(IDivision division) {
         int impact = 0;
 
@@ -314,6 +334,7 @@ public class Mission {
 
         return impact;
     }
+
 
     private int calculatePathPoints(QueueADT<IDivision> path) {
         int totalPoints = 100;

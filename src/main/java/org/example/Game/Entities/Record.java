@@ -19,17 +19,9 @@ public class Record implements IRecord, Comparable<Record> {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     @Override
     public int getHealthPoints() {
         return healthPoints;
-    }
-
-    public void setHealthPoints(int healthPoints) {
-        this.healthPoints = healthPoints;
     }
 
     @Override

@@ -10,7 +10,6 @@ public class Item implements IItem {
     private Integer extraPoints;
     private ItemType type;
 
-    // Private constructor to enforce type rules
     private Item(IDivision division, Integer recoveryPoints, Integer extraPoints, ItemType type) {
         this.division = division;
         this.recoveryPoints = recoveryPoints;
@@ -18,17 +17,14 @@ public class Item implements IItem {
         this.type = type;
     }
 
-    // Static factory method for "kit de vida"
     public static Item createLifeKit(IDivision division, int recoveryPoints) {
         return new Item(division, recoveryPoints, null, ItemType.LIFE_KIT);
     }
 
-    // Static factory method for "pontos-extra"
     public static Item createBulletProofVest(IDivision division, int extraPoints) {
         return new Item(division, null, extraPoints, ItemType.BULLET_PROOF_VEST);
     }
 
-    // Getters and Setters
     @Override
     public IDivision getDivision() {
         return division;

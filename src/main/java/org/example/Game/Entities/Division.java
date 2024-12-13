@@ -16,13 +16,11 @@ public class Division implements IDivision {
     private String name;
     private String description;
 
-    // Constructor with description as optional (can be null)
     public Division(String name) {
         this.name = name;
         this.description = null;
     }
 
-    // Constructor that accepts both name and description
     public Division(String name, String description) {
         this.name = name;
         this.description = description;
