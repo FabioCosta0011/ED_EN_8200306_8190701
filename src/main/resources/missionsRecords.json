@@ -1,40 +1,35 @@
 {
-  "missoes": [
-    {
-      "cod-missao": "Pata de Coelho",
-      "versao": 1,
-      "recordes": [
-        {
-          "data": "2021-06-05",
-          "pontosDeVida": 100
-        },
-        {
-          "data": "2021-05-02",
-          "pontosDeVida": 80
-        },
-        {
-          "data": "2025-06-03",
-          "pontosDeVida": 60
-        }
-      ]
-    },
-    {
-      "cod-missao": "GoldenEye",
-      "versao": 2,
-      "recordes": [
-        {
-          "data": "2021-06-01",
-          "pontosDeVida": 10
-        },
-        {
-          "data": "2021-06-02",
-          "pontosDeVida": 40
-        },
-        {
-          "data": "2021-06-03",
-          "pontosDeVida": 620
-        }
-      ]
-    }
-  ]
+  "missoes" : [ {
+    "cod-missao" : "GoldenEye",
+    "versao" : 2,
+    "recordes" : [ {
+      "data" : "2021-06-01",
+      "pontosDeVida" : 10
+    }, {
+      "data" : "2021-06-02",
+      "pontosDeVida" : 40
+    }, {
+      "data" : "2021-06-03",
+      "pontosDeVida" : 620
+    } ]
+  }, {
+    "cod-missao" : "Pata de Coelho",
+    "versao" : 1,
+    "recordes" : [ {
+      "data" : "2021-06-03",
+      "pontosDeVida" : 60
+    }, {
+      "data" : "2021-06-02",
+      "pontosDeVida" : 80
+    }, {
+      "data" : "2021-06-01",
+      "pontosDeVida" : 100
+    }, {
+      "data" : "2024-12-13",
+      "pontosDeVida" : 100
+    }, {
+      "data" : "2024-12-13",
+      "pontosDeVida" : 150
+    } ]
+  } ]
 }

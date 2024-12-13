@@ -2,6 +2,7 @@ package org.example.Game.Entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.example.Game.Entities.ENUMS.DifficultyType;
@@ -208,53 +209,50 @@ public class Game {
 
     public void saveMissionRecordsToJson() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        File directory = new File("main/resources/");
-        File file = new File(directory, missionRecordsPath);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        File file = new File("src/main/resources/" + missionRecordsPath);
 
-        ObjectNode rootNode = file.exists() ? (ObjectNode) objectMapper.readTree(file) : objectMapper.createObjectNode();
+        ObjectNode rootNode;
+        if (file.exists()) {
+            rootNode = (ObjectNode) objectMapper.readTree(file);
+        } else {
+            rootNode = objectMapper.createObjectNode();
+        }
+
         ArrayNode missionsNode = rootNode.has("missoes") ? (ArrayNode) rootNode.get("missoes") : objectMapper.createArrayNode();
 
-        boolean missionExists = false;
         for (int i = 0; i < missionsNode.size(); i++) {
             ObjectNode existingMission = (ObjectNode) missionsNode.get(i);
             String existingCode = existingMission.get("cod-missao").asText();
-            String existingVersion = existingMission.get("versao").asText();
+            int existingVersion = existingMission.get("versao").asInt();
 
-            if (existingCode.equals(mission.getMissionCode()) && existingVersion.equals(mission.getVersion())) {
-                ArrayNode newRecordsNode = objectMapper.createArrayNode();
-                for (IRecord record : mission.getRecords()) {
-                    ObjectNode recordNode = objectMapper.createObjectNode();
-                    recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
-                    recordNode.put("pontosDeVida", record.getHealthPoints());
-                    newRecordsNode.add(recordNode);
-                }
-                existingMission.set("recordes", newRecordsNode);
-                missionExists = true;
+            if (existingCode.equals(mission.getMissionCode()) && existingVersion == mission.getVersion()) {
+                missionsNode.remove(i);
                 break;
             }
         }
 
-        if (!missionExists) {
-            ObjectNode missionNode = objectMapper.createObjectNode();
-            missionNode.put("cod-missao", mission.getMissionCode());
-            missionNode.put("versao", mission.getVersion());
+        ObjectNode missionNode = objectMapper.createObjectNode();
+        missionNode.put("cod-missao", mission.getMissionCode());
+        missionNode.put("versao", mission.getVersion());
 
-            ArrayNode recordsNode = objectMapper.createArrayNode();
-            for (IRecord record : mission.getRecords()) {
-                ObjectNode recordNode = objectMapper.createObjectNode();
-                recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
-                recordNode.put("pontosDeVida", record.getHealthPoints());
-                recordsNode.add(recordNode);
-            }
-
-            missionNode.set("recordes", recordsNode);
-            missionsNode.add(missionNode);
+        ArrayNode recordsNode = objectMapper.createArrayNode();
+        for (IRecord record : mission.getRecords()) {
+            ObjectNode recordNode = objectMapper.createObjectNode();
+            recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate())); // Formata a data corretamente
+            recordNode.put("pontosDeVida", record.getHealthPoints());
+            recordsNode.add(recordNode);
         }
 
+        missionNode.set("recordes", recordsNode);
+
+        missionsNode.add(missionNode);
+
         rootNode.set("missoes", missionsNode);
+
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootNode);
 
-        System.out.println("Mission records saved to JSON successfully!");
+        System.out.println("Mission records saved to JSON!");
     }
 
     public void createToCruzCharacter(DifficultyType difficulty) throws IOException {
