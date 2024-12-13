@@ -1,9 +1,9 @@
 package org.example.Game.Menus;
 
-import org.example.Game.Entities.Division;
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.Game;
-import org.example.Game.Entities.Mission;
+import org.example.Game.Entities.Interfaces.IDivision;
+import org.example.Structures.Implementations.ArrayUnorderedList;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -13,7 +13,6 @@ public class Menu {
     private final Scanner scanner = new Scanner(System.in);
     private Game game;
     private String missionFile;
-    private Division currentDivision;
     private boolean initialFight = true;
 
 
@@ -35,23 +34,21 @@ public class Menu {
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                       MENU                         ");
         System.out.println("════════════════════════════════════════════════════");
-        System.out.println("1. Start Game");
+        System.out.println("1. Start Manual Game");
+        System.out.println("2. Start Automatic Game");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
 
-    // Get a valid menu choice from the user
     private int getValidMenuChoice() {
         while (true) {
             try {
-                // Leitura da entrada e exibindo para debug
                 String input = scanner.nextLine().trim();
-                System.out.println("You entered: " + input);  // Debug line
+                System.out.println("You entered: " + input);
 
-                int choice = Integer.parseInt(input);  // Tenta converter a entrada para número
+                int choice = Integer.parseInt(input);
 
-                // Verifica se o número está dentro do intervalo permitido
-                if (choice == 1 || choice == 2 || choice == 3 || choice == 0) {
+                if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 0) {
                     return choice;
                 } else {
                     System.out.println("Invalid choice! Please select a valid option.");
@@ -65,22 +62,48 @@ public class Menu {
 
     // Handle the main menu choice
     private void handleMainMenuChoice(int choice) {
-        if (choice == 1) {
-            start();  // Start the game and load mission details
-        } else {
-            System.out.println("Exiting...");
-            System.exit(0);
+        switch (choice) {
+            case 1:
+                startManualGame();
+                return;
+            case 2:
+                startAutomaticGame();
+                return;
+            case 0:
+                System.out.println("Exiting...");
+                System.exit(0);
+                return;
+            default:
+                System.out.println("Invalid choice! Please select a valid option.");
         }
     }
 
-    // Start the game and show the in-game menu
-    private void start() {
+    private void displayMissionRecords() {
         System.out.println("════════════════════════════════════════════════════");
-        System.out.println("                       STARTING                     ");
+        System.out.println("                   MISSION RECORDS                  ");
+        System.out.println("════════════════════════════════════════════════════");
+
+        game.displayMissionRecordsDetails();
+    }
+
+    // Start the game and show the in-game menu
+    private void startManualGame() {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("               STARTING MANUAL GAME                 ");
         System.out.println("════════════════════════════════════════════════════");
 
         loadMissionAndShowDetails();
         showDifficultySelection();
+    }
+
+    private void startAutomaticGame() {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("               STARTING AUTOMATIC GAME              ");
+        System.out.println("════════════════════════════════════════════════════");
+
+        loadMissionAndShowDetails();
+        game.displayBestAutomaticPathToTargetAndReturn();
+
     }
 
     // Load the mission and show details
@@ -88,6 +111,7 @@ public class Menu {
         try {
             game = new Game(this.missionFile, this.scanner);
             game.loadMissionFromJson();
+            game.loadMissionRecordsFromJson();
             game.displayMissionInfo();
         } catch (IOException e) {
             System.err.println("Error loading mission: " + e.getMessage());
@@ -174,6 +198,7 @@ public class Menu {
         System.out.println("1. Start the Game");
         System.out.println("2. View ToCruz Info");
         System.out.println("3. View Mission Info");
+        System.out.println("4. View Missions Records");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -189,6 +214,9 @@ public class Menu {
                 return true;
             case 3:
                 game.displayBuildingDetails();
+                return true;
+            case 4:
+                displayMissionRecords();
                 return true;
             case 0:
                 System.out.println("Exiting...");
@@ -290,7 +318,9 @@ public class Menu {
                 game.moveToNearbyDivision();
                 return true;
             case 7:
-                game.finalizeMission();
+                if (game.finalizeMission()) {
+                    System.exit(0);
+                }
                 return true;
             case 8:
                 game.displayBuildingDetails();

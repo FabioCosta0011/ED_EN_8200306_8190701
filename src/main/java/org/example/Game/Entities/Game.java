@@ -2,19 +2,32 @@ package org.example.Game.Entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.example.Game.Entities.ENUMS.DifficultyType;
 import org.example.Game.Entities.ENUMS.ItemType;
 import org.example.Game.Entities.Interfaces.*;
 import org.example.Structures.Implementations.ArrayUnorderedList;
+import org.example.Structures.Implementations.LinkedQueue;
+import org.example.Structures.Implementations.LinkedStack;
+import org.example.Structures.Interfaces.OrderedListADT;
+import org.example.Structures.Interfaces.QueueADT;
+import org.example.Structures.Interfaces.StackADT;
 import org.example.Structures.Interfaces.UnorderedListADT;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class Game {
 
     private final String missionPath;
+    private final String missionRecordsPath;
     private Mission mission;
     private IToCruz toCruz;
     private Scanner scanner;
@@ -23,6 +36,7 @@ public class Game {
 
     public Game(String missionPath, Scanner scanner) {
         this.missionPath = missionPath;
+        this.missionRecordsPath = "missionsRecords.json";
         this.mission = new Mission();
         this.toCruz = null;
         this.scanner = scanner;
@@ -46,11 +60,6 @@ public class Game {
         return difficulty;
     }
 
-    public void setDifficultyType(DifficultyType difficultyType) {
-        this.difficulty = difficultyType;
-    }
-
-    // Load mission from the JSON file
     public Mission loadMissionFromJson() throws IOException {
         // Load the JSON file from resources
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(missionPath);
@@ -135,6 +144,101 @@ public class Game {
         }
 
         return mission;
+    }
+
+    public OrderedListADT<IRecord> loadMissionRecordsFromJson() throws IOException {
+
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(missionRecordsPath);
+
+        if (inputStream == null) {
+            throw new IOException("JSON file not found: " + missionRecordsPath);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(inputStream);
+
+        JsonNode missionsNode = rootNode.path("missoes");
+
+        if (!missionsNode.isArray()) {
+            throw new IOException("Invalid format: The node 'missoes' is not an array.");
+        }
+
+        String currentMissionCode = mission.getMissionCode();
+        int currentVersion = mission.getVersion();
+
+        boolean missionFound = false;
+
+        for (JsonNode missionNode : missionsNode) {
+            String missionCode = missionNode.path("cod-missao").asText();
+            int version = missionNode.path("versao").asInt();
+
+            if (!missionCode.equals(currentMissionCode) || version != currentVersion) {
+                continue;
+            }
+
+            missionFound = true;
+
+            JsonNode recordsNode = missionNode.path("recordes");
+
+            if (!recordsNode.isArray()) {
+                throw new IOException("Invalid format: The node 'recordes' is not an array.");
+            }
+
+            for (JsonNode recordNode : recordsNode) {
+                String dateStr = recordNode.path("data").asText();
+                int healthPoints = recordNode.path("pontosDeVida").asInt();
+
+                try {
+                    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+
+                    Record record = new Record(date, healthPoints);
+                    mission.getRecords().add(record);
+                } catch (ParseException e) {
+                    throw new IOException("Erro ao converter data: " + dateStr, e);
+                }
+            }
+        }
+
+        if (!missionFound) {
+            System.out.println("No matching mission found for code: " + currentMissionCode + " and version: " + currentVersion);
+        }
+
+        return mission.getRecords();
+    }
+
+    public void saveMissionRecordsToJson() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File("main/resources/" + missionRecordsPath);
+
+        ObjectNode rootNode = null;
+        if (file.exists()) {
+            rootNode = (ObjectNode) objectMapper.readTree(file);
+        } else {
+            rootNode = objectMapper.createObjectNode();
+        }
+
+        ArrayNode missionsNode = rootNode.has("missoes") ? (ArrayNode) rootNode.get("missoes") : objectMapper.createArrayNode();
+
+        ObjectNode missionNode = objectMapper.createObjectNode();
+        missionNode.put("cod-missao", mission.getMissionCode());
+        missionNode.put("versao", mission.getVersion());
+
+        ArrayNode recordsNode = objectMapper.createArrayNode();
+        for (IRecord record : mission.getRecords()) {
+            ObjectNode recordNode = objectMapper.createObjectNode();
+            recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
+            recordNode.put("pontosDeVida", record.getHealthPoints());
+            recordsNode.add(recordNode);
+        }
+
+        missionNode.set("recordes", recordsNode);
+        missionsNode.add(missionNode);
+
+        rootNode.set("missoes", missionsNode);
+
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootNode);
+
+        System.out.println("Mission records saved to JSON!");
     }
 
     public void createToCruzCharacter(DifficultyType difficulty) throws IOException {
@@ -233,6 +337,20 @@ public class Game {
         System.out.println("════════════════════════════════════════════════════");
     }
 
+    public void displayMissionRecordsDetails() {
+
+        System.out.println(mission.getMissionCode() + " - " + mission.getVersion());
+        int count = mission.getRecords().size();
+        System.out.println("Current Records:");
+        Iterator<IRecord> iterator = mission.getRecords().iterator();
+        while (iterator.hasNext()) {
+            IRecord record = iterator.next();
+            System.out.print(count + "º ");
+            displayMissionRecords(record);
+            count--;
+        }
+    }
+
     /**
      * Displays detailed information about a list of divisions.
      *
@@ -253,6 +371,26 @@ public class Game {
             displayTarget(division);
             displayToCruzPresence(division);
             displayEntryExitPoint(division);
+
+            System.out.println();
+        }
+        System.out.println("════════════════════════════════════════════════════");
+    }
+
+    public void displayEntryPoints(ArrayUnorderedList<IDivision> divisions) {
+        System.out.println("════════════════════════════════════════════════════");
+        System.out.println("                   ENTRY/EXIT POINTS                ");
+        System.out.println("════════════════════════════════════════════════════");
+        for (int i = 0; i < divisions.size(); i++) {
+            IDivision division = divisions.getElement(i);
+            System.out.printf("  ▌ Entry/Exit Point (%d): %s%n", (i + 1), division.getName());
+            System.out.println("  ────────────────────────────────────────────────");
+
+            displayEntryExitPoint(division);
+
+            System.out.println("════════════════════════════════════════════════════");
+
+            displayBestAutomaticPathToTargetAndReturn();
 
             System.out.println();
         }
@@ -300,6 +438,14 @@ public class Game {
         } else {
             System.out.println("      No enemies in this division.");
         }
+    }
+
+    private void displayMissionRecords(IRecord record) {
+
+        System.out.printf("Date: %s, Health Points: %d\n",
+                new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()),
+                record.getHealthPoints());
+
     }
 
     private void displayTarget(IDivision division) {
@@ -504,15 +650,15 @@ public class Game {
         System.out.println("════════════════════════════════════════════════════");
     }
 
-    public void finalizeMission() {
+    public boolean finalizeMission() {
         if (toCruz == null) {
             System.out.println("ToCruz is not initialized.");
-            return;
+            return false;
         }
 
         if (toCruz.getTarget() == null) {
             System.out.println("Mission cannot be finalized. ToCruz has not captured the target.");
-            return;
+            return false;
         }
 
         ArrayUnorderedList<IDivision> entryPoints = (ArrayUnorderedList<IDivision>) mission.getEntryPoints();
@@ -520,10 +666,20 @@ public class Game {
 
         if (!entryPoints.contains(currentDivision)) {
             System.out.println("Mission cannot be finalized. ToCruz is not in an entry point.");
-            return;
+            return false;
+        }
+
+        int healthRecord = toCruz.getHealth();
+        mission.getRecords().add(new Record(new Date(), healthRecord));
+
+        try {
+            saveMissionRecordsToJson();
+        } catch (IOException e) {
+            System.out.println("Error saving mission records: " + e.getMessage());
         }
 
         System.out.println("Mission finalized successfully!");
+        return true;
     }
 
     public boolean toCruzDies() {
@@ -535,24 +691,93 @@ public class Game {
     }
 
     public void displayBestPathToTarget() {
-        new ArrayUnorderedList<>();
-        UnorderedListADT<IDivision> bestPath = mission.findBestPathToTarget(toCruz.getCurrentDivision(), mission.getTarget().getDivision());
+        QueueADT<IDivision> bestPath = mission.findBestPathToTarget(
+                toCruz.getCurrentDivision(), mission.getTarget().getDivision()
+        );
 
         if (!bestPath.isEmpty()) {
             System.out.println("════════════════════════════════════════════════════");
             System.out.println("                 BEST PATH TO TARGET                ");
             System.out.println("════════════════════════════════════════════════════");
 
+            StackADT<IDivision> pathCloneForDisplay = new LinkedStack<>();
+            StackADT<IDivision> pathCloneForVerification = new LinkedStack<>();
+
+            while (!bestPath.isEmpty()) {
+                IDivision division = bestPath.dequeue();
+                pathCloneForDisplay.push(division);
+                pathCloneForVerification.push(division);
+            }
+
             IDivision previous = null;
-            for (IDivision division : bestPath) {
+            while (!pathCloneForDisplay.isEmpty()) {
+                IDivision division = pathCloneForDisplay.pop();
                 if (previous != null) {
                     System.out.print("└─> ");
                 }
                 System.out.println(division.getName());
                 previous = division;
             }
-        } else {
-            System.out.println("Cant find an path to target.");
+        }
+    }
+
+    public void displayBestAutomaticPathToTargetAndReturn() {
+
+        QueueADT<IDivision> bestPath = mission.findBestRouteFromMultipleEntryPoints(mission.getEntryPoints(), mission.getTarget().getDivision());
+
+        if (!bestPath.isEmpty()) {
+            System.out.println("════════════════════════════════════════════════════");
+            System.out.println("                 BEST PATH TO TARGET                ");
+            System.out.println("════════════════════════════════════════════════════");
+
+            QueueADT<IDivision> pathCloneForDisplay = new LinkedQueue<>();
+            QueueADT<IDivision> pathCloneForVerification = new LinkedQueue<>();
+
+            while (!bestPath.isEmpty()) {
+                IDivision division = bestPath.dequeue();
+                pathCloneForDisplay.enqueue(division);
+                pathCloneForVerification.enqueue(division);
+            }
+
+            IDivision previous = null;
+            while (!pathCloneForDisplay.isEmpty()) {
+                IDivision division = pathCloneForDisplay.dequeue();
+                if (previous != null) {
+                    System.out.print("└─> ");
+                }
+                System.out.println(division.getName());
+                previous = division;
+            }
+
+
+            System.out.println("\nChecking if it's possible to return to the entry point...");
+            QueueADT<IDivision> verifiedPath = mission.verifyPathToEntry(pathCloneForVerification, mission.getPoints());
+
+            System.out.println(mission.getPoints());
+
+            if (verifiedPath != null && !verifiedPath.isEmpty()) {
+                System.out.println("════════════════════════════════════════════════════");
+                System.out.println("      PATH VERIFIED: RETURN TO ENTRY POINT          ");
+                System.out.println("════════════════════════════════════════════════════");
+
+                StackADT<IDivision> reversedReturnPath = new LinkedStack<>();
+                while (!verifiedPath.isEmpty()) {
+                    reversedReturnPath.push(verifiedPath.dequeue());
+                }
+
+                previous = null;
+                while (!reversedReturnPath.isEmpty()) {
+                    IDivision division = reversedReturnPath.pop();
+                    if (previous != null) {
+                        System.out.print("└─> ");
+                    }
+                    System.out.println(division.getName());
+                    previous = division;
+                }
+                System.out.println(mission.getPoints());
+            } else {
+                System.out.println("It is not possible to find a path back to the entry point.");
+            }
         }
     }
 
