@@ -329,6 +329,17 @@ public class Game {
         System.out.println("Mission records saved to JSON!");
     }
 
+    /**
+     * Saves the logs of the last mission's movements into a JSON file.
+     *
+     * This method serializes the movement logs provided in the {@code logs} queue
+     * and stores them in a JSON file. If the file already exists, it appends the new
+     * logs to the existing file. The logs are stored in a JSON object with each
+     * movement log as a key-value pair.
+     *
+     * @param logs The queue of movement logs to be saved.
+     * @throws IOException If an I/O error occurs while writing to the file or reading an existing one.
+     */
     public void saveLastMissionMovements(QueueADT<String> logs) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -359,6 +370,33 @@ public class Game {
 
         System.out.println("Last Mission Info saved to JSON!");
     }
+
+    /**
+     * Deletes the log file that stores the last mission's movement information.
+     *
+     * This method attempts to delete the log file from the filesystem. If the file exists,
+     * it will be deleted. The method provides feedback on whether the deletion was
+     * successful or if the file was not found.
+     *
+     * @throws IOException If an I/O error occurs during the file deletion process.
+     */
+    public void deleteLogsFile() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        File file = new File("src/main/resources/" + lastMissionInfoPath);
+
+        if (file.exists()) {
+            boolean isDeleted = file.delete();
+            if (isDeleted) {
+                System.out.println("Arquivo de logs apagado com sucesso!");
+            } else {
+                System.out.println("Falha ao apagar o arquivo de logs.");
+            }
+        } else {
+            System.out.println("Arquivo de logs não encontrado.");
+        }
+    }
+
 
     /**
      * Creates the ToCruz character with the specified difficulty, sets the starting division, and initializes the character's health and power.
