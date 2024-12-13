@@ -37,16 +37,16 @@ A combinação do BFS e da lógica do Dijkstra permite avaliar a viabilidade de 
 ### Principais Características
 - **Busca baseada em níveis**: Garante que todas as opções de um nível sejam exploradas antes de passar para o próximo.
 - **Controle de viabilidade**: Apenas caminhos que mantêm pontuação positiva são considerados.
-- **Caminho mais eficiente**: Retorna o caminho que maximiza os pontos restantes ao chegar no destino.
+- **Caminho mais eficiente**: Retorna o caminho que priorize o maior numero de pontos.
 
 ---
 
-## Estruturas de Dados
+## Estruturas de Dados Utilizadas
 
-1. **Fila (Queue)**:
+1. **QueueADT**:
     - Guarda as divisões a serem visitadas durante o processo de busca.
 
-2. **Listas**:
+2. **ArrayUnorderedList**:
     - **Visited**: Armazena as divisões que já foram exploradas.
     - **PointsRemaining**: Armazena a pontuação restante para cada divisão visitada.
     - **Predecessors**: Armazena o rastreamento do caminho.
@@ -66,7 +66,7 @@ A combinação do BFS e da lógica do Dijkstra permite avaliar a viabilidade de 
         - Calcula o impacto de cada vizinho usando a função `calculateImpact`.
         - Adiciona à Queue os vizinhos viáveis (pontuação positiva) e atualiza as listas de pontos e predecessores.
 
-3Resultado:
+3. Resultado:
     - Retorna uma QueueADTcom o caminho encontrado (sequência de divisões).
 
 ---
