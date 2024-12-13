@@ -118,7 +118,7 @@ public class Mission {
         return itemsInDivision;
     }
 
-    public QueueADT<IDivision> findBestPathToTarget(IDivision currentDivision, IDivision targetDivision) {
+    public QueueADT<IDivision> findBestPath(IDivision currentDivision, IDivision targetDivision) {
         QueueADT<IDivision> queue = new LinkedQueue<>();
         ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
         ArrayUnorderedList<Integer> pointsRemaining = new ArrayUnorderedList<>();
@@ -165,6 +165,104 @@ public class Mission {
             step = predecessors.getElement(predecessorIndex);
         }
         return bestPath;
+    }
+
+    public UnorderedListADT<IDivision> findBestPathToLifeKit(IDivision currentDivision) {
+        QueueADT<IDivision> queue = new LinkedQueue<>();
+        ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
+        ArrayUnorderedList<Integer> pointsRemaining = new ArrayUnorderedList<>();
+        ArrayUnorderedList<IDivision> predecessors = new ArrayUnorderedList<>();
+
+        queue.enqueue(currentDivision);
+        visited.addToFront(currentDivision);
+        pointsRemaining.addToRear(100);
+        predecessors.addToRear(null);
+
+        while (!queue.isEmpty()) {
+            IDivision current = queue.dequeue();
+            int currentPoints = pointsRemaining.getElement(visited.find(current));
+
+            ArrayUnorderedList<IItem> items = (ArrayUnorderedList<IItem>) this.getItemsByDivision(current);
+            if (hasItems(current)) {
+                return reconstructPath(predecessors, visited, current);
+            }
+
+            ArrayUnorderedList<IDivision> neighbors = this.getDivisions().getNeighbors(current);
+            for (IDivision neighbor : neighbors) {
+                if (visited.contains(neighbor)) {
+                    continue;
+                }
+
+                int pointsImpact = calculateImpact(neighbor);
+
+                if (currentPoints + pointsImpact > 0) {
+                    int newPoints = currentPoints + pointsImpact;
+
+                    pointsRemaining.addToRear(newPoints);
+                    predecessors.addToRear(current);
+                    queue.enqueue(neighbor);
+                    visited.addToRear(neighbor);
+                }
+            }
+        }
+        return new ArrayUnorderedList<>();
+    }
+
+    public QueueADT<IDivision> findBestRouteFromMultipleEntryPoints(UnorderedListADT<IDivision> entryPoints, IDivision targetDivision) {
+        QueueADT<IDivision> bestPathToTarget = null;
+        int maxPointsToTarget = -1;
+
+
+        for (IDivision entryPoint : entryPoints) {
+            QueueADT<IDivision> currentPathToTarget = findBestPath(entryPoint, targetDivision);
+
+            if (currentPathToTarget != null && !currentPathToTarget.isEmpty()) {
+                int currentPointsToTarget = calculatePathPoints(currentPathToTarget);
+
+                if (currentPointsToTarget > maxPointsToTarget) {
+                    maxPointsToTarget = currentPointsToTarget;
+                    bestPathToTarget = currentPathToTarget;
+                }
+            }
+        }
+
+        // Agora que temos o melhor caminho para o alvo, verificamos o melhor caminho de volta
+        QueueADT<IDivision> bestPathFromTarget = null;
+        int maxPointsFromTarget = -1; // Inicializa como -1 para garantir que qualquer caminho válido seja aceito.
+
+        // Encontrar o melhor caminho de volta para os pontos de entrada a partir do alvo
+        for (IDivision entryPoint : entryPoints) {
+            QueueADT<IDivision> currentPathFromTarget = findBestPath(targetDivision, entryPoint);
+
+            if (currentPathFromTarget != null && !currentPathFromTarget.isEmpty()) {
+                int currentPointsFromTarget = calculatePathPoints(currentPathFromTarget);
+
+                if (currentPointsFromTarget > maxPointsFromTarget) {
+                    maxPointsFromTarget = currentPointsFromTarget;
+                    bestPathFromTarget = currentPathFromTarget;
+                }
+            }
+        }
+
+        // Se ambos os caminhos são encontrados, podemos retornar o melhor caminho completo (ida e volta)
+        if (bestPathToTarget != null && bestPathFromTarget != null) {
+            // Juntando os dois caminhos (ida e volta) em uma única fila
+            QueueADT<IDivision> completePath = new LinkedQueue<>();
+
+            // Adicionando o caminho de entrada para o alvo
+            while (!bestPathToTarget.isEmpty()) {
+                completePath.enqueue(bestPathToTarget.dequeue());
+            }
+
+            // Adicionando o caminho de volta (do alvo até a entrada)
+            while (!bestPathFromTarget.isEmpty()) {
+                completePath.enqueue(bestPathFromTarget.dequeue());
+            }
+
+            return completePath; // Retorna o caminho completo com maior número de pontos
+        }
+
+        return null; // Se não houver caminho válido
     }
 
     public QueueADT<IDivision> verifyPathToEntry(QueueADT<IDivision> pathStack, int initialPoints) {
@@ -217,109 +315,6 @@ public class Mission {
         return impact;
     }
 
-    private int calculatePoints(UnorderedListADT<IDivision> path) {
-        int points = 0;
-        for (IDivision division : path) {
-            UnorderedListADT<IItem> items = this.getItemsByDivision(division);
-            UnorderedListADT<IEnemy> enemies = this.getEnemiesByDivision(division);
-
-            for (IItem item : items) {
-                if (item.getType() == ItemType.LIFE_KIT) {
-                    points += item.getRecoveryPoints();
-                } else if (item.getType() == ItemType.BULLET_PROOF_VEST) {
-                    points += item.getExtraPoints();
-                }
-            }
-
-            for (IEnemy enemy : enemies) {
-                points -= enemy.getPower();
-            }
-        }
-        return points;
-    }
-
-    public UnorderedListADT<IDivision> findBestPathToLifeKit(IDivision currentDivision) {
-        QueueADT<IDivision> queue = new LinkedQueue<>();
-        ArrayUnorderedList<IDivision> visited = new ArrayUnorderedList<>();
-        ArrayUnorderedList<Integer> pointsRemaining = new ArrayUnorderedList<>();
-        ArrayUnorderedList<IDivision> predecessors = new ArrayUnorderedList<>();
-
-        queue.enqueue(currentDivision);
-        visited.addToFront(currentDivision);
-        pointsRemaining.addToRear(100);
-        predecessors.addToRear(null);
-
-        while (!queue.isEmpty()) {
-            IDivision current = queue.dequeue();
-            int currentPoints = pointsRemaining.getElement(visited.find(current));
-
-            ArrayUnorderedList<IItem> items = (ArrayUnorderedList<IItem>) this.getItemsByDivision(current);
-            if (hasItems(current)) {
-                return reconstructPath(predecessors, visited, current);
-            }
-
-            ArrayUnorderedList<IDivision> neighbors = this.getDivisions().getNeighbors(current);
-            for (IDivision neighbor : neighbors) {
-                if (visited.contains(neighbor)) {
-                    continue;
-                }
-
-                int pointsImpact = calculateImpact(neighbor);
-
-                if (currentPoints + pointsImpact > 0) {
-                    int newPoints = currentPoints + pointsImpact;
-
-                    pointsRemaining.addToRear(newPoints);
-                    predecessors.addToRear(current);
-                    queue.enqueue(neighbor);
-                    visited.addToRear(neighbor);
-                }
-            }
-        }
-        return new ArrayUnorderedList<>();
-    }
-
-    private UnorderedListADT<IDivision> reconstructPath(ArrayUnorderedList<IDivision> predecessors,
-                                                        ArrayUnorderedList<IDivision> visited,
-                                                        IDivision target) {
-        UnorderedListADT<IDivision> path = new ArrayUnorderedList<>();
-        IDivision step = target;
-
-        while (step != null) {
-            path.addToFront(step);
-            int predecessorIndex = visited.find(step);
-            step = predecessors.getElement(predecessorIndex);
-        }
-
-        return path;
-    }
-
-    private boolean hasItems(IDivision division) {
-        UnorderedListADT<IItem> itemsInDivision = this.getItemsByDivision(division);
-        return !itemsInDivision.isEmpty();
-    }
-
-
-    public QueueADT<IDivision> findBestPathFromMultipleEntryPoints(UnorderedListADT<IDivision> entryPoints, IDivision targetDivision) {
-        QueueADT<IDivision> bestPath = null;
-        int maxPoints = -1;
-
-        for (IDivision entryPoint : entryPoints) {
-            QueueADT<IDivision> currentPath = findBestPathToTarget(entryPoint, targetDivision);
-
-            if (currentPath != null && !currentPath.isEmpty()) {
-                int currentPoints = calculatePathPoints(currentPath);
-
-                if (currentPoints > maxPoints) {
-                    maxPoints = currentPoints;
-                    bestPath = currentPath;
-                }
-            }
-        }
-
-        return bestPath;
-    }
-
     private int calculatePathPoints(QueueADT<IDivision> path) {
         int totalPoints = 100;
         QueueADT<IDivision> pathCopy = new LinkedQueue<>();
@@ -341,90 +336,25 @@ public class Mission {
         return totalPoints;
     }
 
+    private UnorderedListADT<IDivision> reconstructPath(ArrayUnorderedList<IDivision> predecessors,
+                                                        ArrayUnorderedList<IDivision> visited,
+                                                        IDivision target) {
+        UnorderedListADT<IDivision> path = new ArrayUnorderedList<>();
+        IDivision step = target;
 
-    public QueueADT<IDivision> findBestRouteFromMultipleEntryPoints(UnorderedListADT<IDivision> entryPoints, IDivision targetDivision) {
-        QueueADT<IDivision> bestPathToTarget = null;
-        int maxPointsToTarget = -1; // Inicializa como -1 para garantir que qualquer caminho válido seja aceito.
-
-        // Verifica o melhor caminho de entrada até o alvo
-        for (IDivision entryPoint : entryPoints) {
-            QueueADT<IDivision> currentPathToTarget = findBestPathToTarget(entryPoint, targetDivision);
-
-            if (currentPathToTarget != null && !currentPathToTarget.isEmpty()) {
-                int currentPointsToTarget = calculatePathPoints(currentPathToTarget);
-
-                if (currentPointsToTarget > maxPointsToTarget) {
-                    maxPointsToTarget = currentPointsToTarget;
-                    bestPathToTarget = currentPathToTarget;
-                }
-            }
+        while (step != null) {
+            path.addToFront(step);
+            int predecessorIndex = visited.find(step);
+            step = predecessors.getElement(predecessorIndex);
         }
 
-        // Agora que temos o melhor caminho para o alvo, verificamos o melhor caminho de volta
-        QueueADT<IDivision> bestPathFromTarget = null;
-        int maxPointsFromTarget = -1; // Inicializa como -1 para garantir que qualquer caminho válido seja aceito.
-
-        // Encontrar o melhor caminho de volta para os pontos de entrada a partir do alvo
-        for (IDivision entryPoint : entryPoints) {
-            QueueADT<IDivision> currentPathFromTarget = findBestPathToTarget(targetDivision, entryPoint);
-
-            if (currentPathFromTarget != null && !currentPathFromTarget.isEmpty()) {
-                int currentPointsFromTarget = calculatePathPoints(currentPathFromTarget);
-
-                if (currentPointsFromTarget > maxPointsFromTarget) {
-                    maxPointsFromTarget = currentPointsFromTarget;
-                    bestPathFromTarget = currentPathFromTarget;
-                }
-            }
-        }
-
-        // Se ambos os caminhos são encontrados, podemos retornar o melhor caminho completo (ida e volta)
-        if (bestPathToTarget != null && bestPathFromTarget != null) {
-            // Juntando os dois caminhos (ida e volta) em uma única fila
-            QueueADT<IDivision> completePath = new LinkedQueue<>();
-
-            // Adicionando o caminho de entrada para o alvo
-            while (!bestPathToTarget.isEmpty()) {
-                completePath.enqueue(bestPathToTarget.dequeue());
-            }
-
-            // Adicionando o caminho de volta (do alvo até a entrada)
-            while (!bestPathFromTarget.isEmpty()) {
-                completePath.enqueue(bestPathFromTarget.dequeue());
-            }
-
-            return completePath; // Retorna o caminho completo com maior número de pontos
-        }
-
-        return null; // Se não houver caminho válido
+        return path;
     }
 
-    private int calculatePathPoints2(QueueADT<IDivision> path) {
-        int totalPoints = 100; // Começa com 100 pontos de vida (valor inicial)
-        QueueADT<IDivision> pathCopy = new LinkedQueue<>(); // Copia o caminho para preservá-lo
-
-        while (!path.isEmpty()) {
-            IDivision currentDivision = path.dequeue();
-            pathCopy.enqueue(currentDivision);
-
-            // Adicionar pontos dos itens e subtrair impacto dos inimigos
-            totalPoints += calculateImpact(currentDivision);
-
-            // Verificar se os pontos ficaram abaixo de zero (invalida o caminho)
-            if (totalPoints <= 0) {
-                return -1; // Caminho inválido
-            }
-        }
-
-        // Restaurar o caminho original
-        while (!pathCopy.isEmpty()) {
-            path.enqueue(pathCopy.dequeue());
-        }
-
-        return totalPoints;
+    private boolean hasItems(IDivision division) {
+        UnorderedListADT<IItem> itemsInDivision = this.getItemsByDivision(division);
+        return !itemsInDivision.isEmpty();
     }
-
-
 
 }
 

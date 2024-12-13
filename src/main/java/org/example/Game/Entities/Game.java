@@ -18,6 +18,7 @@ import org.example.Structures.Interfaces.UnorderedListADT;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -208,37 +209,53 @@ public class Game {
 
     public void saveMissionRecordsToJson() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File("main/resources/" + missionRecordsPath);
+        File directory = new File("main/resources/");
+        File file = new File(directory, missionRecordsPath);
 
-        ObjectNode rootNode = null;
-        if (file.exists()) {
-            rootNode = (ObjectNode) objectMapper.readTree(file);
-        } else {
-            rootNode = objectMapper.createObjectNode();
-        }
-
+        ObjectNode rootNode = file.exists() ? (ObjectNode) objectMapper.readTree(file) : objectMapper.createObjectNode();
         ArrayNode missionsNode = rootNode.has("missoes") ? (ArrayNode) rootNode.get("missoes") : objectMapper.createArrayNode();
 
-        ObjectNode missionNode = objectMapper.createObjectNode();
-        missionNode.put("cod-missao", mission.getMissionCode());
-        missionNode.put("versao", mission.getVersion());
+        boolean missionExists = false;
+        for (int i = 0; i < missionsNode.size(); i++) {
+            ObjectNode existingMission = (ObjectNode) missionsNode.get(i);
+            String existingCode = existingMission.get("cod-missao").asText();
+            String existingVersion = existingMission.get("versao").asText();
 
-        ArrayNode recordsNode = objectMapper.createArrayNode();
-        for (IRecord record : mission.getRecords()) {
-            ObjectNode recordNode = objectMapper.createObjectNode();
-            recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
-            recordNode.put("pontosDeVida", record.getHealthPoints());
-            recordsNode.add(recordNode);
+            if (existingCode.equals(mission.getMissionCode()) && existingVersion.equals(mission.getVersion())) {
+                ArrayNode newRecordsNode = objectMapper.createArrayNode();
+                for (IRecord record : mission.getRecords()) {
+                    ObjectNode recordNode = objectMapper.createObjectNode();
+                    recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
+                    recordNode.put("pontosDeVida", record.getHealthPoints());
+                    newRecordsNode.add(recordNode);
+                }
+                existingMission.set("recordes", newRecordsNode);
+                missionExists = true;
+                break;
+            }
         }
 
-        missionNode.set("recordes", recordsNode);
-        missionsNode.add(missionNode);
+        if (!missionExists) {
+            ObjectNode missionNode = objectMapper.createObjectNode();
+            missionNode.put("cod-missao", mission.getMissionCode());
+            missionNode.put("versao", mission.getVersion());
+
+            ArrayNode recordsNode = objectMapper.createArrayNode();
+            for (IRecord record : mission.getRecords()) {
+                ObjectNode recordNode = objectMapper.createObjectNode();
+                recordNode.put("data", new SimpleDateFormat("yyyy-MM-dd").format(record.getDate()));
+                recordNode.put("pontosDeVida", record.getHealthPoints());
+                recordsNode.add(recordNode);
+            }
+
+            missionNode.set("recordes", recordsNode);
+            missionsNode.add(missionNode);
+        }
 
         rootNode.set("missoes", missionsNode);
-
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, rootNode);
 
-        System.out.println("Mission records saved to JSON!");
+        System.out.println("Mission records saved to JSON successfully!");
     }
 
     public void createToCruzCharacter(DifficultyType difficulty) throws IOException {
@@ -247,7 +264,8 @@ public class Game {
 
         ArrayUnorderedList<IDivision> entryPoints = (ArrayUnorderedList<IDivision>) mission.getEntryPoints();
         if (!entryPoints.isEmpty()) {
-            System.out.println("Select Entry Point for ToCruz:");
+            displayEntryPoints(entryPoints);
+            System.out.println("Select Entry Point for To Cruz:");
             for (int i = 0; i < entryPoints.size(); i++) {
                 System.out.printf("%d. %s%n", i + 1, entryPoints.getElement(i).getName());
             }
@@ -386,11 +404,11 @@ public class Game {
             System.out.printf("  ▌ Entry/Exit Point (%d): %s%n", (i + 1), division.getName());
             System.out.println("  ────────────────────────────────────────────────");
 
+            displayConnections(division);
+            displayItems(division);
+            displayEnemies(division);
+            displayTarget(division);
             displayEntryExitPoint(division);
-
-            System.out.println("════════════════════════════════════════════════════");
-
-            displayBestAutomaticPathToTargetAndReturn();
 
             System.out.println();
         }
@@ -464,9 +482,9 @@ public class Game {
     private void displayToCruzPresence(IDivision division) {
         if (toCruz.getCurrentDivision().equals(division)) {
             if (toCruz.isCarryingTarget()) {
-                System.out.println("    🚶 To Cruz is here and is carrying the 🚩 target!");
+                System.out.println("    🕵️ To Cruz is here and is carrying the 🚩 target!");
             } else {
-                System.out.println("    🚶 To Cruz is here.");
+                System.out.println("    🕵️ To Cruz is here.");
             }
         }
     }
@@ -482,7 +500,10 @@ public class Game {
         System.out.printf("Difficulty      : %s%n", getDifficultyType());
         System.out.printf("Max Health Kits : %d%n", toCruz.getMaxHealthKits());
         System.out.println("Number of Health Kits: " + toCruz.getHealthKits().size());
-        System.out.printf("Starting Division: %s%n", toCruz.getCurrentDivision().getName());
+        System.out.printf("Current Division: %s%n", toCruz.getCurrentDivision().getName());
+        if(toCruz.isCarryingTarget()) {
+            System.out.println("Has the target! 🚩");
+        }
     }
 
     public void collectTarget() {
@@ -678,20 +699,31 @@ public class Game {
             System.out.println("Error saving mission records: " + e.getMessage());
         }
 
-        System.out.println("Mission finalized successfully!");
+        System.out.println("════════════════════════════════════════════════════════════════════════════════");
+        System.out.println("                       🎯 Mission Status: Success! 🚀                          ");
+        System.out.println("════════════════════════════════════════════════════════════════════════════════");
+        System.out.println("\nThe mission is successful! Great job agent!!");
+        System.out.println("To Cruz have finished with a total of " + toCruz.getHealth() + " health points!");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════════════");
         return true;
     }
 
     public boolean toCruzDies() {
         if (toCruz.getHealth() <= 0) {
-            System.out.println("ToCruz has died! Game Over!");
+            System.out.println("════════════════════════════════════════════════════════════════════════════════");
+            System.out.println("                    ☠️  GAME OVER: TO CRUZ HAS FALLEN! ☠️                       ");
+            System.out.println("════════════════════════════════════════════════════════════════════════════════");
+            System.out.println("The brave hero, To Cruz, has succumbed to his injuries.");
+            System.out.println("His health has dropped to zero. The mission ends here.");
+            System.out.println("To Cruz ended the mission with " + toCruz.getHealth() + " health points.");
+            System.out.println("════════════════════════════════════════════════════════════════════════════════");
             return true;
         }
         return false;
     }
 
     public void displayBestPathToTarget() {
-        QueueADT<IDivision> bestPath = mission.findBestPathToTarget(
+        QueueADT<IDivision> bestPath = mission.findBestPath(
                 toCruz.getCurrentDivision(), mission.getTarget().getDivision()
         );
 
@@ -718,6 +750,28 @@ public class Game {
                 System.out.println(division.getName());
                 previous = division;
             }
+        }
+    }
+
+    public void displayBestPathToNearLifeItem() {
+        new ArrayUnorderedList<>();
+        UnorderedListADT<IDivision> bestPath = mission.findBestPathToLifeKit(toCruz.getCurrentDivision());
+
+        if (!bestPath.isEmpty()) {
+            System.out.println("════════════════════════════════════════════════════");
+            System.out.println("              BEST PATH TO NEAR LIFE ITEM           ");
+            System.out.println("════════════════════════════════════════════════════");
+
+            IDivision previous = null;
+            for (IDivision division : bestPath) {
+                if (previous != null) {
+                    System.out.print("└─> ");
+                }
+                System.out.println(division.getName());
+                previous = division;
+            }
+        } else {
+            System.out.println("Cant find an path to near life item.");
         }
     }
 
@@ -753,8 +807,6 @@ public class Game {
             System.out.println("\nChecking if it's possible to return to the entry point...");
             QueueADT<IDivision> verifiedPath = mission.verifyPathToEntry(pathCloneForVerification, mission.getPoints());
 
-            System.out.println(mission.getPoints());
-
             if (verifiedPath != null && !verifiedPath.isEmpty()) {
                 System.out.println("════════════════════════════════════════════════════");
                 System.out.println("      PATH VERIFIED: RETURN TO ENTRY POINT          ");
@@ -774,32 +826,15 @@ public class Game {
                     System.out.println(division.getName());
                     previous = division;
                 }
-                System.out.println(mission.getPoints());
+                System.out.println("════════════════════════════════════════════════════════════════════════════════");
+                System.out.println("                        🎯 Mission Status: Success! 🚀                          ");
+                System.out.println("════════════════════════════════════════════════════════════════════════════════");
+                System.out.println("\nThe mission is successful! According to the automatic simulation,");
+                System.out.println("To Cruz will finish with a total of " + mission.getPoints() + " health points!");
+                System.out.println("\n════════════════════════════════════════════════════════════════════════════════");
             } else {
                 System.out.println("It is not possible to find a path back to the entry point.");
             }
-        }
-    }
-
-    public void displayBestPathToNearLifeItem() {
-        new ArrayUnorderedList<>();
-        UnorderedListADT<IDivision> bestPath = mission.findBestPathToLifeKit(toCruz.getCurrentDivision());
-
-        if (!bestPath.isEmpty()) {
-            System.out.println("════════════════════════════════════════════════════");
-            System.out.println("              BEST PATH TO NEAR LIFE ITEM           ");
-            System.out.println("════════════════════════════════════════════════════");
-
-            IDivision previous = null;
-            for (IDivision division : bestPath) {
-                if (previous != null) {
-                    System.out.print("└─> ");
-                }
-                System.out.println(division.getName());
-                previous = division;
-            }
-        } else {
-            System.out.println("Cant find an path to near life item.");
         }
     }
 }
