@@ -262,6 +262,11 @@ public class Menu {
      * Prints the game menu.
      */
     private void printGameMenu() {
+        try {
+            game.deleteLogsFile();
+        } catch (IOException e) {
+            System.out.println("Error deleting file");
+        }
         game.displayMissionInfo();
         System.out.println("════════════════════════════════════════════════════");
         System.out.println("                      GAME MENU                     ");
